@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:id="@+id/relativeLayoutContenedor_fragmentingresarjugador"
+    android:layout_height="match_parent"
+    android:background="@color/negroTransparente"
+    android:orientation="vertical"
+    tools:context=".View.Fragments.IngresarJugadorFragment">
+
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/cardViewContenedorOpcionesDeIngreso_fragmentingresarjugador"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/colorAccent"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="5dp">
+
+
+        <LinearLayout
+            android:id="@+id/linearLayoutAgregarJugador_fragmentingresarjugador"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <LinearLayout
+                android:id="@+id/linearLayoutOpciones_fragmentingresarjugador"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="2"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:id="@+id/imageViewButtonDescargarFoto_fragmentingresarjugador"
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/downloadimage" />
+
+                    <TextView
+                        android:layout_width="64dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="@string/descargar_imagen"
+                        android:textColor="#FFF" />
+                </LinearLayout>
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:text="@string/o"
+                    android:textColor="#FFF" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="2"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:id="@+id/imageViewButtonSubirFoto_fragmentingresarjugador"
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:layout_gravity="center"
+                        android:layout_weight="2"
+                        android:src="@drawable/addfoto" />
+
+                    <TextView
+                        android:layout_width="64dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="@string/subir_imagen"
+                        android:textColor="#FFF" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:visibility="gone"
+                android:id="@+id/circleImageViewPreview_fragmentingresarjugador"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_gravity="center" />
+
+            <EditText
+                android:id="@+id/editTextCampoNombreDelJugador_fragmentingresarjugador"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:hint="@string/nombre_del_jugador"
+                android:textColorHint="@color/negro" />
+
+            <ImageView
+                android:id="@+id/imageViewButtonCheck_fragmentingresarjugador"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_gravity="right"
+                android:layout_margin="10dp"
+                android:src="@drawable/check" />
+
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+
+
+</FrameLayout>

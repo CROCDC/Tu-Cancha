@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frameLayoutContenedor_activitymain"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/verdeclaro"
+    tools:context=".View.Activitys.MainActivity">
+
+
+    <include
+        layout="@layout/toolbar" />
+
+    <RelativeLayout
+        android:id="@+id/relativeLayoutContenedor_activitymain"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <View
+            android:layout_margin="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/canchadefutbol">
+
+        </View>
+
+
+
+        <android.support.v7.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="?attr/actionBarSize"
+            app:cardBackgroundColor="@color/transparente"
+            >
+
+
+            <ImageView
+                android:id="@+id/imageViewButtonAdd_activitymain"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
+                android:src="@drawable/add" />
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="bottom"
+            app:cardBackgroundColor="@color/transparente"
+            >
+
+            <ImageView
+
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
+                android:src="@drawable/basura" />
+        </android.support.v7.widget.CardView>
+
+
+
+    </RelativeLayout>
+</FrameLayout>

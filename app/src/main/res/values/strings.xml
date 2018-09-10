@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Tu Cancha</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="nombre_del_jugador">Nombre del jugador</string>
+    <string name="o">O</string>
+    <string name="descargar_imagen">Descargar Imagen</string>
+    <string name="subir_imagen">Subir imagen</string>
+    <string name="river">River</string>
+    <string name="title_activity_main2">Main2Activity</string>
+</resources>
