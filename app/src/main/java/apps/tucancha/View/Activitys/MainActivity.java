@@ -1,12 +1,27 @@
 package apps.tucancha.View.Activitys;
 
+import android.Manifest;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,9 +30,16 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
-import apps.tucancha.Utils.Paint_screen;
+import apps.tucancha.BuildConfig;
+import apps.tucancha.Elementos_Creados.Pizarra;
+import apps.tucancha.Elementos_Creados.Screnshot;
+import apps.tucancha.Elementos_Creados.SistemaDragAndDrop;
 import apps.tucancha.View.Fragments.IngresarJugadorFragment;
 import apps.tucancha.Model.Jugador;
 import apps.tucancha.R;
@@ -34,8 +56,6 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
 
     private ImageView imageViewAdd;
 
-    private int _xDelta;
-    private int _yDelta;
 
     private IngresarJugadorFragment ingresarJugadorFragment;
     private ListaDeJugadoresFragment listaDeJugadoresFragment;
@@ -48,6 +68,9 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
     private String yaBuscoUnJugador = "";
 
     private Toolbar toolbar;
+    private Pizarra pizarra;
+
+    private Bitmap bitmapScreenshot;
 
 
     @Override
@@ -55,9 +78,9 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         toolbar = findViewById(R.id.toolbar);
         rootLayout = findViewById(R.id.relativeLayoutContenedor_activitymain);
+        pizarra = findViewById(R.id.pizarra_activitymain);
         imageViewAdd = findViewById(R.id.imageViewButtonAdd_activitymain);
 
         layoutParams = new RelativeLayout.LayoutParams(200, 200);
@@ -65,14 +88,34 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
 
         toolbar.inflateMenu(R.menu.menuprincipal);
 
+
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.opcionDibujar:
-                        Paint_screen paint_screen = new Paint_screen(getApplicationContext());
-                        setContentView(paint_screen);
+                        if (pizarra.isHabilitado()) {
+                            pizarra.deshabilitarPizarra();
+                            pizarra.borrarDibujo();
+                            toolbar.getMenu().getItem(0).setIcon(R.drawable.pencil);
+
+                        } else {
+                            pizarra.habilitarPizarra();
+                            toolbar.getMenu().getItem(0).setIcon(R.drawable.pencilwhite);
+                        }
+
                         break;
+                    case R.id.opcionCompartir:
+                        View view = getWindow().getDecorView().getRootView();
+                        bitmapScreenshot = Screnshot.hacerScreenshotFormatoBitmap(view);
+                        Screnshot.createFolder("Tu cancha");
+                        try {
+                            Screnshot.guardarScreenshot("1",bitmapScreenshot,getApplicationContext());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+
                 }
                 return true;
             }
@@ -135,6 +178,8 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
 
     @Override
     public void notificarAgregarJugadorConImagenStorage(String url, String nombreDelJugador) {
+        toolbar.setVisibility(View.VISIBLE);
+
         Jugador jugador = new Jugador(nombreDelJugador, url, 3);
         agregarFragmentJugadorConFoto(jugador);
     }
@@ -146,6 +191,7 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
      */
 
     public void agregarFragmentJugadorConFoto(Jugador jugador) {
+
         final JugadorFragment jugadorFragment = JugadorFragment.frabricaDeFragmentsJugador(jugador);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -153,6 +199,7 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
         fragmentTransaction.add(R.id.relativeLayoutContenedor_activitymain, jugadorFragment).addToBackStack("Camilo");
 
         fragmentTransaction.remove(ingresarJugadorFragment);
+
 
         fragmentTransaction.commit();
 
@@ -162,7 +209,7 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
             public void run() {
 
                 //HAGO ESTO PARA QUE LE DE TIEMPO A CREAR LA VISTA
-                jugadorFragment.getView().setOnTouchListener(new TouchFragmentJugador(jugadorFragment));
+                jugadorFragment.getView().setOnTouchListener(new SistemaDragAndDrop(jugadorFragment, getSupportFragmentManager(), rootLayout));
 
             }
         }, 400);
@@ -177,6 +224,7 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
      */
 
     public void agregarFragmentJugadorSinFoto(Jugador jugador) {
+        toolbar.setVisibility(View.VISIBLE);
 
         final JugadorFragment jugadorFragment = JugadorFragment.frabricaDeFragmentsJugador(jugador);
 
@@ -194,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
             public void run() {
 
                 //HAGO ESTO PARA QUE LE DE TIEMPO A CREAR LA VISTA
-                jugadorFragment.getView().setOnTouchListener(new TouchFragmentJugador(jugadorFragment));
+                jugadorFragment.getView().setOnTouchListener(new SistemaDragAndDrop(jugadorFragment, getSupportFragmentManager(), rootLayout));
 
             }
         }, 400);
@@ -204,61 +252,12 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
 
 
     /**
-     * Esta Clase es la encargada de administrar el drag and drop de los fragments jugador
-     */
-
-    private final class TouchFragmentJugador implements View.OnTouchListener {
-        private JugadorFragment jugadorFragment;
-
-        public TouchFragmentJugador(JugadorFragment jugadorFragment) {
-            this.jugadorFragment = jugadorFragment;
-        }
-
-        @Override
-        public boolean onTouch(View view, MotionEvent event) {
-            final int X = (int) event.getRawX();
-            final int Y = (int) event.getRawY();
-            switch (event.getAction() & MotionEvent.ACTION_MASK) {
-                case MotionEvent.ACTION_DOWN:
-                    RelativeLayout.LayoutParams lParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
-                    _xDelta = X - lParams.leftMargin;
-                    _yDelta = Y - lParams.topMargin;
-                    break;
-                case MotionEvent.ACTION_UP:
-                    break;
-                case MotionEvent.ACTION_POINTER_DOWN:
-                    break;
-                case MotionEvent.ACTION_POINTER_UP:
-                    break;
-                case MotionEvent.ACTION_MOVE:
-                    RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view
-                            .getLayoutParams();
-                    layoutParams.leftMargin = X - _xDelta;
-                    layoutParams.topMargin = Y - _yDelta;
-                    layoutParams.rightMargin = -250;
-                    layoutParams.bottomMargin = -250;
-                    view.setLayoutParams(layoutParams);
-
-                    if (X < 70 && Y > 1200) {
-                        FragmentManager fragmentManager = getSupportFragmentManager();
-                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                        fragmentTransaction.remove(jugadorFragment);
-                        fragmentTransaction.commit();
-                    }
-                    break;
-            }
-            rootLayout.invalidate();
-            return true;
-        }
-    }
-
-
-    /**
      * Metodo de la Interfaz NotificadorDesdeClubesHaciaMainActivity se encarga de cargar el Fragment Lista De Clubes
      */
 
     @Override
     public void notificarCargarListaDeClubes() {
+        toolbar.setVisibility(View.GONE);
         if (yaBuscoUnJugador.equals("")) {
             listaDeClubesFragment = new ListaDeClubesFragment();
             FragmentManager fragmentManager = getSupportFragmentManager();
@@ -293,6 +292,7 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.add(R.id.frameLayoutContenedor_activitymain, listaDeJugadoresFragment).addToBackStack("Camilo");
         fragmentTransaction.commit();
+
     }
 
 
@@ -305,6 +305,8 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
      */
     @Override
     public void notificarTouchCeldaJugadorNotificarActualizarImagen(Jugador jugador, String nombreDelClub) {
+        toolbar.setVisibility(View.VISIBLE);
+
         yaBuscoUnJugador = nombreDelClub;
 
         ingresarJugadorFragment.cargarImagenDelJugador(jugador, nombreDelClub);
@@ -320,7 +322,21 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
 
     @Override
     public void onBackPressed() {
+       yaBuscoUnJugador = "";
+       if (listaDeJugadoresFragment == null){
+           if (listaDeJugadoresFragment.isVisible()){
+               toolbar.setVisibility(View.GONE);
+           }else {
+               toolbar.setVisibility(View.VISIBLE);
+           }
+       }
+
         super.onBackPressed();
-        yaBuscoUnJugador = "";
+
+
+
     }
+
+
+
 }

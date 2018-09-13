@@ -18,13 +18,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <View
+        <apps.tucancha.Elementos_Creados.Pizarra
+            android:id="@+id/pizarra_activitymain"
             android:layout_margin="20dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/canchadefutbol">
 
-        </View>
+        </apps.tucancha.Elementos_Creados.Pizarra>
 
 
 

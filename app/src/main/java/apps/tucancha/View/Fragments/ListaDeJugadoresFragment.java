@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.Toolbar;
 
 import java.util.List;
 
@@ -37,6 +39,7 @@ public class ListaDeJugadoresFragment extends Fragment {
     private String nombreDelClub;
     public static final String CLAVE_CLUB = "CLUB";
 
+
     public ListaDeJugadoresFragment() {
         // Required empty public constructor
     }
@@ -52,6 +55,7 @@ public class ListaDeJugadoresFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         Bundle bundle = getArguments();
 
 
@@ -61,8 +65,8 @@ public class ListaDeJugadoresFragment extends Fragment {
         gridLayoutManager = new GridLayoutManager(getContext(), 2, LinearLayoutManager.VERTICAL, false);
         listaDeJugadoresAdapter = new ListaDeJugadoresAdapter(nombreDelClub, new ListaDeJugadoresAdapter.NotificadorHaciaImplementador() {
             @Override
-            public void notificarTouchCeldaJugador(Jugador jugador,String nombreDelClub) {
-                notificador.notificarTouchCeldaJugadorNotificarActualizarImagen(jugador,nombreDelClub);
+            public void notificarTouchCeldaJugador(Jugador jugador, String nombreDelClub) {
+                notificador.notificarTouchCeldaJugadorNotificarActualizarImagen(jugador, nombreDelClub);
             }
         });
         controllerFirebase.pedirListaDeJugadoresPorClub(nombreDelClub, new ResultListener<List<Jugador>>() {
@@ -97,5 +101,6 @@ public class ListaDeJugadoresFragment extends Fragment {
     public interface NotificadorDesdeJugadoresHaciaMainActivity {
         public void notificarTouchCeldaJugadorNotificarActualizarImagen(Jugador jugador, String nombreDelClub);
     }
+
 
 }
