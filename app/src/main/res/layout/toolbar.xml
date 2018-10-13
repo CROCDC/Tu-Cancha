@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/verdeoscuro"
+    android:background="@color/colorPrimary"
+    app:theme="@style/ToolbarColoredBackArrow"
     app:title="@string/app_name">
 
 </android.support.v7.widget.Toolbar>

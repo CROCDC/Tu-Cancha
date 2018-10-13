@@ -6,7 +6,7 @@ package apps.tucancha.Utils;
 
 public class Helper {
 
-
+    public static final Integer RESULT_OK = 1;
 
 
 

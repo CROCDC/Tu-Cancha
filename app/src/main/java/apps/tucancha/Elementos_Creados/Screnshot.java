@@ -67,7 +67,6 @@ public class Screnshot {
 
         try {
             // image naming and path  to include sd card  appending name you choose for file
-            String mPath = Environment.getExternalStorageDirectory().toString() + "/" + now + ".jpg";
 
             // create bitmap screen capture
             view.setDrawingCacheEnabled(true);

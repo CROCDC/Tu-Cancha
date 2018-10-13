@@ -6,7 +6,6 @@ import android.os.Bundle;
 
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.Toolbar;
 
 import java.util.List;
 
@@ -35,7 +33,7 @@ public class ListaDeJugadoresFragment extends Fragment {
     private GridLayoutManager gridLayoutManager;
     private ProgressBar progressBar;
 
-    private NotificadorDesdeJugadoresHaciaMainActivity notificador;
+    private NotificadorDesdeJugadoresHaciaSeleccionarJugadorActivity notificador;
     private String nombreDelClub;
     public static final String CLAVE_CLUB = "CLUB";
 
@@ -48,7 +46,7 @@ public class ListaDeJugadoresFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        notificador = (NotificadorDesdeJugadoresHaciaMainActivity) context;
+        notificador = (NotificadorDesdeJugadoresHaciaSeleccionarJugadorActivity) context;
     }
 
     @Override
@@ -98,7 +96,7 @@ public class ListaDeJugadoresFragment extends Fragment {
     /**
      * Esta Interfaz se encarga de notificarle al MainActivity que Jugador fue tocado
      */
-    public interface NotificadorDesdeJugadoresHaciaMainActivity {
+    public interface NotificadorDesdeJugadoresHaciaSeleccionarJugadorActivity {
         public void notificarTouchCeldaJugadorNotificarActualizarImagen(Jugador jugador, String nombreDelClub);
     }
 

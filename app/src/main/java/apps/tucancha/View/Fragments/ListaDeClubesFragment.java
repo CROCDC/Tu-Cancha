@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -32,7 +31,7 @@ public class ListaDeClubesFragment extends Fragment {
     private RecyclerView recyclerViewListaDeClubes;
     private LinearLayoutManager linearLayoutManager;
 
-    private NotificadorDesdeClubesHaciaMainActivity notificador;
+    private NotificadorDesdeClubesHaciaSeleccionarJugadorActivity notificador;
 
     private ProgressBar progressBar;
 
@@ -43,7 +42,7 @@ public class ListaDeClubesFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        notificador = (NotificadorDesdeClubesHaciaMainActivity) context;
+        notificador = (NotificadorDesdeClubesHaciaSeleccionarJugadorActivity) context;
     }
 
     @Override
@@ -57,7 +56,7 @@ public class ListaDeClubesFragment extends Fragment {
         listaDeClubesAdapter = new ListaDeClubesAdapter(new ListaDeClubesAdapter.NotificadorHaciaImplementador() {
             @Override
             public void notificarTouchCeldaClub(String nombreDelClub) {
-                notificador.notificarTouchCeldaClubCargarFragmentListaDeJugadores(nombreDelClub);
+                notificador.notificarTouchCeldaClubCargarActivityListaDeJugadores(nombreDelClub);
 
             }
         });
@@ -92,8 +91,8 @@ public class ListaDeClubesFragment extends Fragment {
     /**
      * Esta es la integaz encarga de notificar al MainAcivity que debe cargar el fragment Lista de Jugadores
      */
-    public interface NotificadorDesdeClubesHaciaMainActivity {
-        public void notificarTouchCeldaClubCargarFragmentListaDeJugadores(String nombreDelClub);
+    public interface NotificadorDesdeClubesHaciaSeleccionarJugadorActivity {
+        public void notificarTouchCeldaClubCargarActivityListaDeJugadores(String nombreDelClub);
     }
 
 }
