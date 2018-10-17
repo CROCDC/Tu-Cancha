@@ -9,4 +9,7 @@
     <string name="subir_imagen">Subir imagen</string>
     <string name="river">River</string>
     <string name="title_activity_main2">Main2Activity</string>
+    <string name="canchas_guardadas">Canchas Guardadas</string>
+    <string name="ingrese_el_nombre_de_la_cancha">Ingrese el nombre de la cancha</string>
+    <string name="nombre_de_la_cancha">Nombre de la cancha</string>
 </resources>

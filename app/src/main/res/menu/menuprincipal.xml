@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/opcionDibujar"
-        android:icon="@drawable/pencil"
+        android:icon="@drawable/pencilblack"
         android:title="Dibujar"
         app:showAsAction="always" />
 

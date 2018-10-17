@@ -1,17 +1,23 @@
 package apps.tucancha.View.Activitys;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,31 +26,30 @@ import android.widget.RelativeLayout;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
+import apps.tucancha.Controller.ControllerFirebase;
 import apps.tucancha.Elementos_Creados.Pizarra;
 import apps.tucancha.Elementos_Creados.Screnshot;
 import apps.tucancha.Elementos_Creados.SistemaDragAndDrop;
+import apps.tucancha.Model.Cancha;
 import apps.tucancha.Utils.Helper;
+import apps.tucancha.Utils.ResultListener;
 import apps.tucancha.View.Fragments.IngresarJugadorFragment;
 import apps.tucancha.Model.Jugador;
 import apps.tucancha.R;
+import apps.tucancha.View.Fragments.IngresarNombreDeLaCanchaFragment;
 import apps.tucancha.View.Fragments.JugadorFragment;
-import apps.tucancha.View.Fragments.ListaDeClubesFragment;
-import apps.tucancha.View.Fragments.ListaDeJugadoresFragment;
 
 /**
  * Esta Activity se encarga de recibir las imagenes de cargar los fragments y de poner a los jugadores en la cancha y encargarse del drag and drop
  */
 
-public class MainActivity extends AppCompatActivity implements IngresarJugadorFragment.NotificadorHaciaMainActivity {
-
-
-    public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 123;
+public class MainActivity extends AppCompatActivity implements IngresarJugadorFragment.NotificadorHaciaMainActivity, IngresarNombreDeLaCanchaFragment.NotificadorHaciaMainActivity {
 
 
     private IngresarJugadorFragment ingresarJugadorFragment;
-    private ListaDeJugadoresFragment listaDeJugadoresFragment;
-    private ListaDeClubesFragment listaDeClubesFragment;
 
     private ViewGroup rootLayout;
 
@@ -52,21 +57,30 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
 
     private String yaBuscoUnJugador = "";
 
+    private DrawerLayout drawerLayout;
     private Toolbar toolbar;
     private Pizarra pizarra;
     private RelativeLayout linearLayoutContenedorPizarra;
     private ImageView imageViewAdd;
     private Bitmap bitmapScreenshot;
 
+    private final List<JugadorFragment> listaDeJugadoresFragments = new ArrayList<>();
+    private final List<Jugador> listaDeJugadores = new ArrayList<>();
+    private List<Cancha> listaDeCanchas = new ArrayList<>();
+
+
     public static final String CLAVE_JUGADOR = "jugador";
     public static final String CLAVE_CLUB = "club";
-    public static final String CLAVE_BUNDLE ="bundle";
+    public static final String CLAVE_BUNDLE = "bundle";
 
     private String nombreDelClubRecibido;
     private Jugador jugadorRecibido;
 
+    private ControllerFirebase controllerFirebase;
 
+    private NavigationView navigationView;
 
+    private IngresarNombreDeLaCanchaFragment ingresarNombreDeLaCanchaFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,43 +88,35 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
         setContentView(R.layout.activity_main);
 
         toolbar = findViewById(R.id.toolbar);
+
+        drawerLayout = findViewById(R.id.drawerLayoutContenedor_activitymain);
         rootLayout = findViewById(R.id.relativeLayoutContenedor_activitymain);
         pizarra = findViewById(R.id.pizarra_activitymain);
         imageViewAdd = findViewById(R.id.imageViewButtonAdd_activitymain);
         linearLayoutContenedorPizarra = findViewById(R.id.linearLayoutContenedorSoloPizarra_activitymain);
+        navigationView = findViewById(R.id.navigationView_activitymain);
         layoutParams = new RelativeLayout.LayoutParams(200, 200);
 
 
+        controllerFirebase = new ControllerFirebase();
+
         toolbar.inflateMenu(R.menu.menuprincipal);
 
-
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+        controllerFirebase.pedirListaDeCanchas(new ResultListener<List<Cancha>>() {
+            @SuppressLint("NewApi")
             @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.opcionDibujar:
-                        if (pizarra.isHabilitado()) {
-                            pizarra.deshabilitarPizarra();
-                            pizarra.borrarDibujo();
-                            toolbar.getMenu().getItem(0).setIcon(R.drawable.pencil);
+            public void finish(List<Cancha> resultado) {
+                listaDeCanchas = resultado;
 
-                        } else {
-                            pizarra.habilitarPizarra();
-                            toolbar.getMenu().getItem(0).setIcon(R.drawable.pencilwhite);
-                        }
-
-                        break;
-                    case R.id.opcionCompartir:
-                        View view = getWindow().getDecorView().getRootView();
-                        bitmapScreenshot = Screnshot.hacerScreenshotFormatoBitmap(linearLayoutContenedorPizarra);
-
-                        startShare(bitmapScreenshot);
-
-
-                }
-                return true;
+                agregrarCanchasGuardadaslNavigationView(resultado);
             }
+
+
         });
+
+        toolbar.setOnMenuItemClickListener(new TouchListenerToolbar());
+        navigationView.setNavigationItemSelectedListener(new TouchListenerNavigationView());
+
 
         touchImageViewButtonAdd();
 
@@ -146,6 +152,7 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
     public void notificarAgregarJugadorSinFoto(String nombreDelJugador) {
         Jugador jugador = new Jugador(nombreDelJugador, 1);
         agregarFragmentJugadorSinFoto(jugador);
+
     }
 
     /**
@@ -181,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
      * @param jugador objeto jugador
      */
 
-    public void agregarFragmentJugadorConFoto(Jugador jugador) {
+    public void agregarFragmentJugadorConFoto(final Jugador jugador) {
 
         final JugadorFragment jugadorFragment = JugadorFragment.frabricaDeFragmentsJugador(jugador);
 
@@ -189,10 +196,14 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.add(R.id.linearLayoutContenedorSoloPizarra_activitymain, jugadorFragment).addToBackStack("Camilo");
 
+
         fragmentTransaction.remove(ingresarJugadorFragment);
 
 
-        fragmentTransaction.commit();
+        listaDeJugadoresFragments.add(jugadorFragment);
+        listaDeJugadores.add(jugador);
+
+        fragmentTransaction.commitAllowingStateLoss();
 
 
         new Handler().postDelayed(new Runnable() {
@@ -200,7 +211,13 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
             public void run() {
 
                 //HAGO ESTO PARA QUE LE DE TIEMPO A CREAR LA VISTA
-                jugadorFragment.getView().setOnTouchListener(new SistemaDragAndDrop(jugadorFragment, getSupportFragmentManager(), linearLayoutContenedorPizarra));
+                jugadorFragment.getView().setOnTouchListener(new SistemaDragAndDrop(jugadorFragment, getSupportFragmentManager(), linearLayoutContenedorPizarra, new ResultListener<JugadorFragment>() {
+                    @Override
+                    public void finish(JugadorFragment jugadorFragmentAEliminar) {
+                        listaDeJugadoresFragments.remove(jugadorFragmentAEliminar);
+                        listaDeJugadores.remove(jugador);
+                    }
+                }));
 
             }
         }, 400);
@@ -214,7 +231,7 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
      * @param jugador objeto jugador
      */
 
-    public void agregarFragmentJugadorSinFoto(Jugador jugador) {
+    public void agregarFragmentJugadorSinFoto(final Jugador jugador) {
 
 
         final JugadorFragment jugadorFragment = JugadorFragment.frabricaDeFragmentsJugador(jugador);
@@ -225,20 +242,61 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
 
         fragmentTransaction.remove(ingresarJugadorFragment);
 
-        fragmentTransaction.commit();
+        fragmentTransaction.commitAllowingStateLoss();
 
+        listaDeJugadoresFragments.add(jugadorFragment);
+        listaDeJugadores.add(jugador);
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
 
                 //HAGO ESTO PARA QUE LE DE TIEMPO A CREAR LA VISTA
-                jugadorFragment.getView().setOnTouchListener(new SistemaDragAndDrop(jugadorFragment, getSupportFragmentManager(), linearLayoutContenedorPizarra));
+                jugadorFragment.getView().setOnTouchListener(new SistemaDragAndDrop(jugadorFragment, getSupportFragmentManager(), linearLayoutContenedorPizarra, new ResultListener<JugadorFragment>() {
+                    @Override
+                    public void finish(JugadorFragment jugadorFragmentAEliminar) {
+                        listaDeJugadoresFragments.remove(jugadorFragmentAEliminar);
+                        listaDeJugadores.remove(jugador);
+                    }
+                }));
 
             }
         }, 400);
 
 
+    }
+
+    public void agregarFragmentJugadorConImageStorageYUbicacion(Jugador jugador) {
+        final JugadorFragment jugadorFragment = JugadorFragment.frabricaDeFragmentsJugador(jugador);
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.add(R.id.linearLayoutContenedorSoloPizarra_activitymain, jugadorFragment).addToBackStack("Camilo");
+
+        if (ingresarJugadorFragment != null) {
+            fragmentTransaction.remove(ingresarJugadorFragment);
+        }
+
+        fragmentTransaction.commitAllowingStateLoss();
+
+        listaDeJugadoresFragments.add(jugadorFragment);
+        listaDeJugadores.add(jugador);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                //HAGO ESTO PARA QUE LE DE TIEMPO A CREAR LA VISTA
+                jugadorFragment.getView().setOnTouchListener(new SistemaDragAndDrop(jugadorFragment, getSupportFragmentManager(), linearLayoutContenedorPizarra, new ResultListener<JugadorFragment>() {
+                    @Override
+                    public void finish(JugadorFragment jugadorFragmentAEliminar) {
+                        listaDeJugadoresFragments.remove(jugadorFragmentAEliminar);
+                        listaDeJugadores.remove(jugador);
+                    }
+                }, jugador.getX(), jugador.getY()));
+
+            }
+        }, 400);
     }
 
 
@@ -255,7 +313,7 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
 
 
         } else {
-            Intent intent = new Intent(MainActivity.this,ListaDeJugadoresActivity.class);
+            Intent intent = new Intent(MainActivity.this, ListaDeJugadoresActivity.class);
 
             Bundle bundle = new Bundle();
 
@@ -263,7 +321,7 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
 
             intent.putExtras(bundle);
 
-            startActivityForResult(intent,10);
+            startActivityForResult(intent, 10);
 
 
         }
@@ -271,11 +329,43 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
     }
 
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        switch (requestCode){
+        switch (requestCode) {
+            case 1:
+                if (resultCode == Helper.RESULT_OK) {
+                    Bundle bundleRecibido = data.getExtras();
+                    nombreDelClubRecibido = bundleRecibido.getString(CLAVE_CLUB);
+                    yaBuscoUnJugador = nombreDelClubRecibido;
+
+                    Intent intent = new Intent(MainActivity.this, ListaDeJugadoresActivity.class);
+
+                    Bundle bundleAEnviar = new Bundle();
+
+                    bundleAEnviar.putString(ListaDeJugadoresActivity.CLAVE_CLUB, nombreDelClubRecibido);
+
+                    intent.putExtras(bundleAEnviar);
+
+                    startActivityForResult(intent, 10);
+
+                    break;
+                }
+
+
             case 10:
+                if (resultCode == Helper.RESULT_OK) {
+                    Bundle bundleRecibido1 = data.getExtras();
+                    Jugador jugador = (Jugador) bundleRecibido1.getSerializable(CLAVE_JUGADOR);
+
+                    agregarFragmentJugadorConFoto(jugador);
+
+                    break;
+                } else if (resultCode == Helper.RESULT_ONBACKPRESS) {
+                    Intent intent = new Intent(MainActivity.this, ListaDeClubesActivity.class);
+                    startActivityForResult(intent, 1);
+                    yaBuscoUnJugador = "";
+                }
+
 
         }
 
@@ -285,7 +375,7 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
     }
 
 
-    private void startShare(Bitmap bitmap) {
+    private void compartirCancha(Bitmap bitmap) {
 
 
         if (Build.VERSION.SDK_INT >= 24) {
@@ -327,6 +417,121 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
         }
     }
 
+
+    @SuppressLint("NewApi")
+    private void agregrarCanchasGuardadaslNavigationView(List<Cancha> listaDeCanchas) {
+        Menu menu = navigationView.getMenu();
+
+
+        menu.clear();
+
+        menu.add("Canchas Guardadas");
+
+        listaDeCanchas.forEach(i -> {
+            menu.add(i.getNombre());
+
+        });
+
+
+        navigationView.invalidate();
+    }
+
+    @Override
+    public void notificarGuardarCancha(String nombreDeLaCancha) {
+        getSupportFragmentManager().beginTransaction().remove(ingresarNombreDeLaCanchaFragment).commit();
+
+
+        for (Integer i = 0; i < listaDeJugadores.size(); i++) {
+
+            listaDeJugadores.get(i).setX(listaDeJugadoresFragments.get(i).getView().getX());
+            listaDeJugadores.get(i).setY(listaDeJugadoresFragments.get(i).getView().getY());
+
+        }
+
+
+        controllerFirebase.guardarCancha(new Cancha(nombreDeLaCancha, listaDeJugadores), new ResultListener<Boolean>() {
+            @Override
+            public void finish(Boolean resultado) {
+
+            }
+        });
+
+        controllerFirebase.pedirListaDeCanchas(new ResultListener<List<Cancha>>() {
+            @Override
+            public void finish(List<Cancha> resultado) {
+                agregrarCanchasGuardadaslNavigationView(resultado);
+
+                listaDeCanchas = resultado;
+            }
+        });
+    }
+
+
+    private class TouchListenerNavigationView implements NavigationView.OnNavigationItemSelectedListener {
+        @SuppressLint("NewApi")
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+            for (Integer i = 0;i<listaDeCanchas.size();i++){
+                if (listaDeCanchas.get(i).getNombre().equals(item.getTitle())){
+                    cargarCanchaSeleccionada(i);
+                }
+            }
+
+            drawerLayout.closeDrawers();
+            return false;
+        }
+    }
+
+    private class TouchListenerToolbar implements Toolbar.OnMenuItemClickListener {
+        @SuppressLint("NewApi")
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            switch (item.getItemId()) {
+
+                case R.id.opcionDibujar:
+                    if (pizarra.isHabilitado()) {
+                        pizarra.deshabilitarPizarra();
+                        pizarra.borrarDibujo();
+                        toolbar.getMenu().getItem(0).setIcon(R.drawable.pencilblack);
+
+                    } else {
+                        pizarra.habilitarPizarra();
+                        toolbar.getMenu().getItem(0).setIcon(R.drawable.pencilwhite);
+                    }
+
+                    break;
+                case R.id.opcionCompartir:
+                    bitmapScreenshot = Screnshot.hacerScreenshotFormatoBitmap(linearLayoutContenedorPizarra);
+
+                    compartirCancha(bitmapScreenshot);
+                    break;
+
+                case R.id.opcionGuardar:
+                    ingresarNombreDeLaCanchaFragment = new IngresarNombreDeLaCanchaFragment();
+
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.add(R.id.frameLayoutContenedor_activitymain, ingresarNombreDeLaCanchaFragment);
+                    fragmentTransaction.commitAllowingStateLoss();
+
+
+                    break;
+            }
+            return true;
+        }
+    }
+
+    @SuppressLint("NewApi")
+    public void cargarCanchaSeleccionada(Integer iCancha) {
+        Cancha cancha = listaDeCanchas.get(iCancha);
+
+        cancha.getListaDeJugadores().forEach(i -> {
+            agregarFragmentJugadorConImageStorageYUbicacion(i);
+        });
+
+
+    }
 
 }
 

@@ -27,6 +27,8 @@ public class ListaDeClubesActivity extends AppCompatActivity implements ListaDeC
     private Toolbar toolbar;
 
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +56,7 @@ public class ListaDeClubesActivity extends AppCompatActivity implements ListaDeC
 
     @Override
     public void notificarTouchCeldaClubCargarActivityListaDeJugadores(String nombreDelClub) {
-        Intent intent = new Intent(ListaDeClubesActivity.this, ListaDeJugadoresActivity.class);
+        Intent intent = new Intent(ListaDeClubesActivity.this, MainActivity.class);
 
         Bundle bundle = new Bundle();
 
@@ -62,7 +64,11 @@ public class ListaDeClubesActivity extends AppCompatActivity implements ListaDeC
 
         intent.putExtras(bundle);
 
-        startActivityForResult(intent,1000);
+        setResult(Helper.RESULT_OK,intent);
+
+        finish();
+
+
 
     }
 

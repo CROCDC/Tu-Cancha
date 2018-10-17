@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/negroTransparente"
+    android:orientation="vertical"
+    tools:context=".View.Fragments.IngresarNombreDeLaCanchaFragment">
+
+
+    <android.support.v7.widget.CardView
+        android:layout_centerInParent="true"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="5dp"
+        app:cardBackgroundColor="@color/colorAccent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+
+        <LinearLayout
+            android:layout_margin="20dp"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/colorAccent"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ingrese_el_nombre_de_la_cancha"
+                android:textColor="@color/negro"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/editTextNombreDeLaCancha_fragmentnomnredelacancha"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="50dp"
+                android:hint="@string/nombre_de_la_cancha"
+                android:textColor="@color/negro"
+                android:textColorHint="@color/negro" />
+
+            <ImageView
+                android:id="@+id/imageViewButtonCheck_fragmentingresarnombredelacancha"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_gravity="right"
+                android:src="@drawable/check" />
+        </LinearLayout>
+
+
+    </android.support.v7.widget.CardView>
+
+</RelativeLayout>

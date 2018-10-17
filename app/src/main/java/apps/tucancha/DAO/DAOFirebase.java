@@ -1,6 +1,7 @@
 package apps.tucancha.DAO;
 
 import android.net.Uri;
+import android.os.Build;
 import android.support.annotation.NonNull;
 
 
@@ -17,6 +18,7 @@ import com.google.firebase.storage.StorageReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import apps.tucancha.Model.Cancha;
 import apps.tucancha.Model.Jugador;
 import apps.tucancha.Utils.ResultListener;
 
@@ -29,13 +31,14 @@ public class DAOFirebase {
     private DatabaseReference databaseReference;
     private FirebaseStorage firebaseStorage;
     private StorageReference reference;
-
+    String numeroDeSerie;
 
 
     public DAOFirebase() {
         firebaseDatabase = FirebaseDatabase.getInstance();
         firebaseStorage = FirebaseStorage.getInstance();
         reference = firebaseStorage.getReference();
+        numeroDeSerie = Build.SERIAL;
     }
 
     /**
@@ -129,5 +132,38 @@ public class DAOFirebase {
 
         });
 
+    }
+
+    public void guardarLaCancha(Cancha cancha, final ResultListener<Boolean> escuchadorDelControlador){
+
+        databaseReference = firebaseDatabase.getReference();
+
+        databaseReference.child("CanchasGuardadas").child(numeroDeSerie).push().setValue(cancha);
+
+        escuchadorDelControlador.finish(true);
+
+
+
+    }
+
+    public void pedirListaDeCanchasGuardadas(final  ResultListener<List<Cancha>> escuchadorDelControlador){
+        databaseReference = firebaseDatabase.getReference();
+
+        databaseReference.child("CanchasGuardadas").child(numeroDeSerie).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<Cancha> listaDeCanchas = new ArrayList<>();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    listaDeCanchas.add(snapshot.getValue(Cancha.class));
+                }
+
+                escuchadorDelControlador.finish(listaDeCanchas);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }

@@ -3,6 +3,7 @@ package apps.tucancha.Controller;
 import java.util.List;
 
 import apps.tucancha.DAO.DAOFirebase;
+import apps.tucancha.Model.Cancha;
 import apps.tucancha.Model.Jugador;
 import apps.tucancha.Utils.ResultListener;
 /**
@@ -39,9 +40,27 @@ public class ControllerFirebase {
      */
 
     public void pedirListaDeJugadoresPorClub(String nombreDelClub, final ResultListener<List<Jugador>> escuchadorDeLaVista){
-        new DAOFirebase().pedirListaDeJugadoresPorClub(nombreDelClub, new ResultListener<List<Jugador>>() {
+        daoFirebase.pedirListaDeJugadoresPorClub(nombreDelClub, new ResultListener<List<Jugador>>() {
             @Override
             public void finish(List<Jugador> resultado) {
+                escuchadorDeLaVista.finish(resultado);
+            }
+        });
+    }
+
+    public void guardarCancha(Cancha cancha,final ResultListener<Boolean> escuchadorDeLaVista){
+        daoFirebase.guardarLaCancha(cancha, new ResultListener<Boolean>() {
+            @Override
+            public void finish(Boolean resultado) {
+                escuchadorDeLaVista.finish(resultado);
+            }
+        });
+    }
+
+    public void pedirListaDeCanchas(final ResultListener<List<Cancha>> escuchadorDeLaVista){
+        daoFirebase.pedirListaDeCanchasGuardadas(new ResultListener<List<Cancha>>() {
+            @Override
+            public void finish(List<Cancha> resultado) {
                 escuchadorDeLaVista.finish(resultado);
             }
         });

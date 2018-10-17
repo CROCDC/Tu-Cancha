@@ -6,6 +6,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 
 import apps.tucancha.Model.Jugador;
 import apps.tucancha.R;
@@ -16,12 +18,20 @@ public class ListaDeJugadoresActivity extends AppCompatActivity implements Lista
 
     public static final String CLAVE_CLUB ="club";
 
+    private ListaDeJugadoresFragment listaDeJugadoresFragment;
+
+    private Toolbar toolbar;
 
     private String nombreDelClub;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lista_de_jugadores);
+
+        toolbar = findViewById(R.id.toolbar);
+
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
 
@@ -30,7 +40,7 @@ public class ListaDeJugadoresActivity extends AppCompatActivity implements Lista
         nombreDelClub = bundle.getString(CLAVE_CLUB);
 
 
-        ListaDeJugadoresFragment listaDeJugadoresFragment = new ListaDeJugadoresFragment();
+        listaDeJugadoresFragment = new ListaDeJugadoresFragment();
 
         Bundle bundleFragment = new Bundle();
 
@@ -54,20 +64,36 @@ public class ListaDeJugadoresActivity extends AppCompatActivity implements Lista
 
         Bundle bundle = new Bundle();
 
-        bundle.putSerializable(ListaDeClubesActivity.CLAVE_JUGADOR, jugador);
-        bundle.putString(ListaDeJugadoresActivity.CLAVE_CLUB, nombreDelClub);
+        bundle.putSerializable(MainActivity.CLAVE_JUGADOR, jugador);
 
         intent.putExtras(bundle);
 
         setResult(Helper.RESULT_OK, intent);
+
+        getSupportFragmentManager().beginTransaction().remove(listaDeJugadoresFragment).commit();
 
         finish();
     }
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(ListaDeJugadoresActivity.this, ListaDeClubesActivity.class);
-        startActivityForResult(intent,10000);
+        Intent intent = new Intent(ListaDeJugadoresActivity.this, MainActivity.class);
+
+        setResult(Helper.RESULT_ONBACKPRESS,intent);
+
         finish();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case 16908332:
+                onBackPressed();
+                break;
+
+        }
+        return super.onOptionsItemSelected(item);
+
     }
 }
