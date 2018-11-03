@@ -11,8 +11,9 @@ public class Jugador implements Serializable {
     private String urlFoto;
     private File foto;
     private Integer tipoJugador;
-    private float Y;
     private float x;
+    private float y;
+
 
 
     public Jugador() {
@@ -35,13 +36,20 @@ public class Jugador implements Serializable {
         this.foto = foto;
     }
 
+    public Jugador(String nombre, String urlFoto, Integer tipoJugador, float y, float x) {
+        this.nombre = nombre;
+        this.urlFoto = urlFoto;
+        this.tipoJugador = tipoJugador;
+        this.y = y;
+        this.x = x;
+    }
 
     public float getY() {
-        return Y;
+        return y;
     }
 
     public void setY(float y) {
-        Y = y;
+        this.y = y;
     }
 
     public float getX() {

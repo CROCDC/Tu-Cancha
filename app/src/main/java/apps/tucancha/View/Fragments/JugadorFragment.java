@@ -25,6 +25,10 @@ public class JugadorFragment extends Fragment {
 
     private Jugador jugador;
 
+    public Jugador getJugador() {
+        return jugador;
+    }
+
     private CircleImageView circleImageViewJugador;
     private TextView textViewNombreDelJugador;
 

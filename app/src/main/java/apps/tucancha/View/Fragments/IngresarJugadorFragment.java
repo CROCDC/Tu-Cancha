@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -31,6 +32,7 @@ import pl.aprilapps.easyphotopicker.EasyImage;
 public class IngresarJugadorFragment extends Fragment {
 
 
+    private FrameLayout frameLayoutContenedor;
     private LinearLayout linearLayoutContenedorOpciones;
     private CardView cardViewContenedor;
     private ImageView imageViewButtonDescargarFoto;
@@ -63,6 +65,7 @@ public class IngresarJugadorFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_ingresar_jugador, container, false);
 
 
+        frameLayoutContenedor = view.findViewById(R.id.frameLayoutContenedor_fragmentingresarjugador);
         linearLayoutContenedorOpciones = view.findViewById(R.id.linearLayoutOpciones_fragmentingresarjugador);
         cardViewContenedor = view.findViewById(R.id.cardViewContenedorOpcionesDeIngreso_fragmentingresarjugador);
         imageViewButtonDescargarFoto = view.findViewById(R.id.imageViewButtonDescargarFoto_fragmentingresarjugador);
@@ -74,6 +77,9 @@ public class IngresarJugadorFragment extends Fragment {
         touchImageViewButtonDescargarImagen();
         touchImageViewButtonAddFoto();
         touchImageViewButtonCheck();
+        touchFrameLayoutContenedor();
+        touchCardViewContenedor();
+
 
         return view;
     }
@@ -129,6 +135,24 @@ public class IngresarJugadorFragment extends Fragment {
                     case 3:
                         notificador.notificarAgregarJugadorConImagenStorage(fotoUrl, nombre);
                 }
+            }
+        });
+    }
+
+    public void touchFrameLayoutContenedor(){
+        frameLayoutContenedor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().onBackPressed();
+            }
+        });
+    }
+
+    public void touchCardViewContenedor(){
+        cardViewContenedor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
     }
