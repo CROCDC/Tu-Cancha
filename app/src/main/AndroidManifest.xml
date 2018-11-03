@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="apps.tucancha">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
 
     <application
         android:allowBackup="true"
@@ -15,6 +17,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".View.Activitys.MainActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,7 +27,8 @@
         </activity>
         <activity
             android:name=".View.Activitys.ListaDeClubesActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <provider
             android:name=".Utils.FileProvider"
@@ -38,8 +42,16 @@
 
         <activity
             android:name=".View.Activitys.ListaDeJugadoresActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".View.Activitys.ReceiverActivity">
+            <intent-filter>
+                       
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+                   
+            </intent-filter>
         </activity>
     </application>
 

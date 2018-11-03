@@ -46,5 +46,17 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:16.0.1'
     implementation 'com.google.firebase:firebase-database:16.0.1'
     implementation 'com.google.firebase:firebase-messaging:17.3.0'
+
+    //Esteganografia
+    implementation 'com.github.aagarwal1012:Image-Steganography-Library-Android:v1.0'
+
+    //GSON
+    implementation 'com.google.code.gson:gson:2.8.5'
+
+    compile 'com.github.kenglxn.QRGen:android:2.5.0'
+
+
+
+
 }
 apply plugin: 'com.google.gms.google-services'
