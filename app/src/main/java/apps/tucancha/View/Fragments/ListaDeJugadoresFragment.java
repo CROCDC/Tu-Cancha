@@ -3,7 +3,6 @@ package apps.tucancha.View.Fragments;
 
 import android.content.Context;
 import android.os.Bundle;
-
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -33,10 +32,21 @@ public class ListaDeJugadoresFragment extends Fragment {
     private GridLayoutManager gridLayoutManager;
     private ProgressBar progressBar;
 
+
+    private List<Jugador> listaDeJugadores;
+
     private NotificadorDesdeJugadoresHaciaSeleccionarJugadorActivity notificador;
     private String nombreDelClub;
     public static final String CLAVE_CLUB = "CLUB";
 
+
+    public ListaDeJugadoresAdapter getListaDeJugadoresAdapter() {
+        return listaDeJugadoresAdapter;
+    }
+
+    public List<Jugador> getListaDeJugadores() {
+        return listaDeJugadores;
+    }
 
     public ListaDeJugadoresFragment() {
         // Required empty public constructor
@@ -71,7 +81,9 @@ public class ListaDeJugadoresFragment extends Fragment {
             @Override
             public void finish(List<Jugador> resultado) {
                 listaDeJugadoresAdapter.setListaDeJugadores(resultado);
+                listaDeJugadores = resultado;
                 progressBar.setVisibility(View.GONE);
+                notificador.notificarCargaTerminada();
             }
         });
     }
@@ -90,6 +102,7 @@ public class ListaDeJugadoresFragment extends Fragment {
         recyclerView.setLayoutManager(gridLayoutManager);
 
 
+
         return view;
     }
 
@@ -98,6 +111,7 @@ public class ListaDeJugadoresFragment extends Fragment {
      */
     public interface NotificadorDesdeJugadoresHaciaSeleccionarJugadorActivity {
         public void notificarTouchCeldaJugadorNotificarActualizarImagen(Jugador jugador, String nombreDelClub);
+        public void notificarCargaTerminada();
     }
 
 

@@ -31,8 +31,14 @@ public class ListaDeClubesAdapter extends RecyclerView.Adapter {
     }
 
 
+
     public void setListaDeEquipos(List<String> listaDeEquipos) {
         this.listaDeEquipos = listaDeEquipos;
+        notifyDataSetChanged();
+    }
+
+    public void filtrarListaDeEquipos(List<String> listaDeEquiposFiltrada){
+        listaDeEquipos = listaDeEquiposFiltrada;
         notifyDataSetChanged();
     }
 
@@ -94,6 +100,9 @@ public class ListaDeClubesAdapter extends RecyclerView.Adapter {
                     .using(new FirebaseImageLoader())
                     .load(reference)
                     .into(imageViewEscudoDelClub);
+
+            reference = null;
+            reference = firebaseStorage.getReference();
         }
     }
 

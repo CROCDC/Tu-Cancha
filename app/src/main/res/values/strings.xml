@@ -12,4 +12,8 @@
     <string name="canchas_guardadas">Canchas Guardadas</string>
     <string name="ingrese_el_nombre_de_la_cancha">Ingrese el nombre de la cancha</string>
     <string name="nombre_de_la_cancha">Nombre de la cancha</string>
+    <string name="compartir_con_codigo_qr">Compartir con codigo QR</string>
+    <string name="compatir_con_codigo_sin_qr">Compatir sin codigo QR</string>
+    <string name="introduccion_a_los_botones">Introducción a los Botones</string>
+    <string name="aqui_podras_elegir_entre_la_primera_opcion_o_la_segunda_en_la_primera_podras_compartirle_a_tus_amigos_la_cancha_que_creaste_con_los_jugadores_que_agregaste_y_los_trazos_que_creaste_y_ademas_un_codigo_qr_que_les_permitira_a_tus_amigos_compartir_la_cancha_con_la_aplicacion_y_al_hacer_esto_ellos_podran_editar_la_cancha_que_tu_creaste_o_la_segunda_opcion_es_compartir_la_cancha_solo_con_los_jugadores_y_los_trazos">Aqui podras elegir entre la primera opcion o la segunda en la primera podras compartirle a tus amigos la cancha que creaste con los jugadores que agregaste y los trazos que creaste y ademas un codigo QR que les permitira a tus amigos compartir la cancha con la aplicacion y al hacer esto ellos podran editar la cancha que tu creaste o la segunda opcion es compartir la cancha solo con los jugadores y los trazos</string>
 </resources>

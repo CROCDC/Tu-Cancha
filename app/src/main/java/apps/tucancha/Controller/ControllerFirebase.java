@@ -57,6 +57,15 @@ public class ControllerFirebase {
         });
     }
 
+    public void borrarCancha(Cancha cancha,final ResultListener<Boolean> escuchadorDeLaVista){
+        daoFirebase.borrarCancha(cancha, new ResultListener<Boolean>() {
+            @Override
+            public void finish(Boolean resultado) {
+                escuchadorDeLaVista.finish(true);
+            }
+        });
+    }
+
     public void pedirListaDeCanchas(final ResultListener<List<Cancha>> escuchadorDeLaVista){
         daoFirebase.pedirListaDeCanchasGuardadas(new ResultListener<List<Cancha>>() {
             @Override

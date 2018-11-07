@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorAccent"
+    android:orientation="vertical"
+    tools:context=".View.Fragments.Walkthrough.IntroExplicacionBorrarJugadorFragment">
+
+
+    <android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:elevation="6dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="Como borrar un Jugador"
+            android:textColor="@color/negro"
+            android:textSize="25sp" />
+
+    </android.support.v7.widget.Toolbar>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:adjustViewBounds="true"
+            android:padding="@dimen/_10sdp"
+            android:src="@drawable/basura" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/_20sdp"
+            android:text="Si acercas un jugador a al tacho de basura inmediatamante el jugador sera borrardo de la cancha"
+            android:textSize="@dimen/_17sdp" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_140sdp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:src="@drawable/ejemplotacho" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/_10sdp"
+            android:text="Asi se borra un jugador arrastrandolo un poco mas hacia abajo"
+            android:textSize="@dimen/_15sdp" />
+
+    </LinearLayout>
+</LinearLayout>

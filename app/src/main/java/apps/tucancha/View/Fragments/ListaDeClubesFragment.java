@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import java.util.List;
@@ -30,10 +31,20 @@ public class ListaDeClubesFragment extends Fragment {
     private ListaDeClubesAdapter listaDeClubesAdapter;
     private RecyclerView recyclerViewListaDeClubes;
     private LinearLayoutManager linearLayoutManager;
+    private List<String> listaDeEquipos;
+    private ImageView imageViewButtonSearch;
 
     private NotificadorDesdeClubesHaciaSeleccionarJugadorActivity notificador;
 
     private ProgressBar progressBar;
+
+    public ListaDeClubesAdapter getListaDeClubesAdapter() {
+        return listaDeClubesAdapter;
+    }
+
+    public List<String> getListaDeEquipos() {
+        return listaDeEquipos;
+    }
 
     public ListaDeClubesFragment() {
         // Required empty public constructor
@@ -67,6 +78,8 @@ public class ListaDeClubesFragment extends Fragment {
             public void finish(List<String> resultado) {
                 listaDeClubesAdapter.setListaDeEquipos(resultado);
                 progressBar.setVisibility(View.GONE);
+                listaDeEquipos = resultado;
+                notificador.notificarCargaTerminada();
             }
         });
     }
@@ -93,6 +106,9 @@ public class ListaDeClubesFragment extends Fragment {
      */
     public interface NotificadorDesdeClubesHaciaSeleccionarJugadorActivity {
         public void notificarTouchCeldaClubCargarActivityListaDeJugadores(String nombreDelClub);
+        void notificarCargaTerminada();
     }
+
+
 
 }

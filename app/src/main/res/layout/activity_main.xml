@@ -54,8 +54,9 @@
 
                 <ImageView
                     android:id="@+id/imageViewButtonAdd_activitymain"
-                    android:layout_width="38dp"
-                    android:layout_height="38dp"
+                    android:layout_width="@dimen/_38sdp"
+                    android:layout_height="@dimen/_38sdp
+"
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentEnd="true"
                     android:layout_gravity="center"
@@ -73,8 +74,8 @@
 
                 <ImageView
 
-                    android:layout_width="38dp"
-                    android:layout_height="38dp"
+                    android:layout_width="@dimen/_38sdp"
+                    android:layout_height="@dimen/_38sdp"
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentLeft="true"
                     android:layout_gravity="center"
@@ -87,11 +88,12 @@
     </FrameLayout>
 
     <android.support.design.widget.NavigationView
+        app:headerLayout="@layout/headernavigationview"
         android:id="@+id/navigationView_activitymain"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        app:menu="@menu/menunavigationview">
+    >
 
     </android.support.design.widget.NavigationView>
 </android.support.v4.widget.DrawerLayout>

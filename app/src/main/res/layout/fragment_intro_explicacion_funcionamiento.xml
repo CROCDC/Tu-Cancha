@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorAccent"
+    android:orientation="vertical"
+    tools:context=".View.Fragments.Walkthrough.IntroExplicacionFuncionamientoFragment">
+
+    <android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:elevation="6dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:padding="10dp"
+            android:text="Como funciona Tu Cancha"
+            android:textColor="@color/negro"
+            android:textSize="25sp" />
+
+    </android.support.v7.widget.Toolbar>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="Te explicare los elementos principales que tiene Tu Cancha"
+        android:textSize="@dimen/_17sdp" />
+
+
+    <ImageView
+        android:layout_width="@dimen/_190sdp"
+        android:layout_height="@dimen/_170sdp"
+        android:layout_gravity="center_horizontal"
+        android:adjustViewBounds="true"
+        android:src="@drawable/canchadefutbol1" />I
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="Esta es la cancha aqui posicionaras a los jugadores de acuerdo a tus necesidades"
+        android:textSize="@dimen/_17sdp" />
+
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_width="@dimen/_70sdp"
+        android:layout_height="@dimen/_70sdp"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/quintero" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="Este es un jugador podras arrastrarlos por la cancha para crear tus jugadas"
+        android:textSize="@dimen/_17sdp" />
+
+
+</LinearLayout>

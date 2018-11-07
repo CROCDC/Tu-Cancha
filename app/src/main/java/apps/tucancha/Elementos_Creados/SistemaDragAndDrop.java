@@ -1,8 +1,10 @@
+
 package apps.tucancha.Elementos_Creados;
 
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
+
 import apps.tucancha.Utils.ResultListener;
 import apps.tucancha.View.Fragments.JugadorFragment;
 
@@ -59,7 +61,7 @@ public class SistemaDragAndDrop implements View.OnTouchListener {
                 jugadorFragment.getView().setY(Y - layoutParams.topMargin * 2);
 
 
-                if (X >= 20 && Y >= 1200) {
+                if (X <= 70 && Y >= 1200) {
                     esuchadorDeEliminacion.finish(jugadorFragment);
                 }
 

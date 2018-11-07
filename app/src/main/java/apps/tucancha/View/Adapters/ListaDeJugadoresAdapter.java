@@ -1,7 +1,6 @@
 package apps.tucancha.View.Adapters;
 
 import android.content.Context;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,10 +10,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.firebase.ui.storage.images.FirebaseImageLoader;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -40,6 +35,11 @@ public class ListaDeJugadoresAdapter extends RecyclerView.Adapter {
 
     public void setListaDeJugadores(List<Jugador> listaDeJugadores) {
         this.listaDeJugadores = listaDeJugadores;
+        notifyDataSetChanged();
+    }
+
+    public void filtrarListaDeJugadores(List<Jugador> listaDeJugadoresFiltrada){
+        listaDeJugadores = listaDeJugadoresFiltrada;
         notifyDataSetChanged();
     }
 

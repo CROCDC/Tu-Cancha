@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorAccent"
+    android:orientation="vertical"
+    tools:context=".View.Fragments.Walkthrough.IntroExplicacionCompartirFragment">
+
+    <android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:elevation="6dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="Como compartir una cancha"
+            android:textColor="@color/negro"
+            android:textSize="25sp" />
+
+    </android.support.v7.widget.Toolbar>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:src="@drawable/share" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/_20sdp"
+        android:text="Al presionar este boton aparecera la siguiente pantalla"
+        android:textSize="@dimen/_17sdp" />
+
+
+    <fragment
+        android:id="@+id/estoy_totalment_obligado_a_implementar_un_id_en_este_caso"
+        android:layout_gravity="center_horizontal"
+        class="apps.tucancha.View.Fragments.OpcionCompartirImagenFragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:layout="@layout/fragment_intro_explicacion_compartir" />
+
+    <TextView
+        android:id="@+id/textViewDescripcionFragment_fragmentintroexplicacioncompartir"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/_17sdp"
+        android:text="Aqui podras elegir como compartir la cancha tocando los botones de info podras saber que significa cada opcion"
+        android:textSize="@dimen/_16sdp" />
+
+</LinearLayout>

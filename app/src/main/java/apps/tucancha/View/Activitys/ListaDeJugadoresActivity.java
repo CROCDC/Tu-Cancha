@@ -1,13 +1,21 @@
 package apps.tucancha.View.Activitys;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.MenuItem;
+import android.view.WindowManager;
+import android.widget.EditText;
+import android.widget.ImageView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import apps.tucancha.Model.Jugador;
 import apps.tucancha.R;
@@ -21,6 +29,8 @@ public class ListaDeJugadoresActivity extends AppCompatActivity implements Lista
     private ListaDeJugadoresFragment listaDeJugadoresFragment;
 
     private Toolbar toolbar;
+    private EditText editTextFiltro;
+    private ImageView imageViewButtonSearch;
 
     private String nombreDelClub;
     @Override
@@ -28,7 +38,11 @@ public class ListaDeJugadoresActivity extends AppCompatActivity implements Lista
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lista_de_jugadores);
 
-        toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbarfilter);
+        editTextFiltro = toolbar.findViewById(R.id.editTextFiltro_toolbarfiltro);
+        imageViewButtonSearch = toolbar.findViewById(R.id.imageViewButtonSearch_toolbarfiltro);
+
+        listaDeJugadoresFragment = new ListaDeJugadoresFragment();
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -40,7 +54,7 @@ public class ListaDeJugadoresActivity extends AppCompatActivity implements Lista
         nombreDelClub = bundle.getString(CLAVE_CLUB);
 
 
-        listaDeJugadoresFragment = new ListaDeJugadoresFragment();
+
 
         Bundle bundleFragment = new Bundle();
 
@@ -50,6 +64,12 @@ public class ListaDeJugadoresActivity extends AppCompatActivity implements Lista
         listaDeJugadoresFragment.setArguments(bundleFragment);
 
         cargarFragment(listaDeJugadoresFragment);
+
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
+
+
+
     }
     public void cargarFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -76,6 +96,11 @@ public class ListaDeJugadoresActivity extends AppCompatActivity implements Lista
     }
 
     @Override
+    public void notificarCargaTerminada() {
+        filtradoEditText();
+    }
+
+    @Override
     public void onBackPressed() {
         Intent intent = new Intent(ListaDeJugadoresActivity.this, MainActivity.class);
 
@@ -95,5 +120,37 @@ public class ListaDeJugadoresActivity extends AppCompatActivity implements Lista
         }
         return super.onOptionsItemSelected(item);
 
+    }
+
+
+    private void filtradoEditText(){
+        editTextFiltro.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                filtrarJugadores(s.toString());
+
+            }
+        });
+    }
+
+    private void filtrarJugadores(String text) {
+        List<Jugador> listaFiltrada = new ArrayList<>();
+
+        for (Jugador jugador : listaDeJugadoresFragment.getListaDeJugadores()) {
+            if (jugador.getNombre().toLowerCase().contains(text.toLowerCase())) {
+                listaFiltrada.add(jugador);
+            }
+        }
+
+        listaDeJugadoresFragment.getListaDeJugadoresAdapter().filtrarListaDeJugadores(listaFiltrada);
     }
 }

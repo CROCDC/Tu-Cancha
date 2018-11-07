@@ -10,6 +10,6 @@
     tools:context=".View.Activitys.ListaDeClubesActivity">
 
     <include
-        layout="@layout/toolbar" />
+        layout="@layout/toolbarfiltro" />
 
 </LinearLayout>

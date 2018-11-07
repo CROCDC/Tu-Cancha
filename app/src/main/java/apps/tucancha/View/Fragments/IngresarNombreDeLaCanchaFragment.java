@@ -3,7 +3,6 @@ package apps.tucancha.View.Fragments;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -11,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import apps.tucancha.R;
 
@@ -47,7 +47,13 @@ public class IngresarNombreDeLaCanchaFragment extends Fragment {
         editTextNombreDeLaCancha.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                notificadorHaciaMainActivity.notificarGuardarCancha(editTextNombreDeLaCancha.getText().toString());
+                if (editTextNombreDeLaCancha.getText().toString().equals("")) {
+                    Toast.makeText(getContext(), "Ingrese un nombre por favor", Toast.LENGTH_SHORT).show();
+                } else {
+                    notificadorHaciaMainActivity.notificarGuardarCancha(editTextNombreDeLaCancha.getText().toString());
+
+
+                }
                 return false;
             }
         });
@@ -55,17 +61,21 @@ public class IngresarNombreDeLaCanchaFragment extends Fragment {
         imageViewButtonCheck.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                notificadorHaciaMainActivity.notificarGuardarCancha(editTextNombreDeLaCancha.getText().toString());
+                if (editTextNombreDeLaCancha.getText().toString().equals("")) {
+                    Toast.makeText(getContext(), "Ingrese un nombre por favor", Toast.LENGTH_SHORT).show();
+                } else {
+                    notificadorHaciaMainActivity.notificarGuardarCancha(editTextNombreDeLaCancha.getText().toString());
+
+                }
             }
         });
-
-
 
 
         return view;
     }
 
-    public interface NotificadorHaciaMainActivity{
+
+    public interface NotificadorHaciaMainActivity {
         public void notificarGuardarCancha(String nombreDeLaCancha);
     }
 }

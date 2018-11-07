@@ -1,15 +1,12 @@
 package apps.tucancha.Elementos_Creados;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
-import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -39,7 +36,7 @@ public class Screnshot {
             File imageFile = new File(mPath);
 
             FileOutputStream outputStream = new FileOutputStream(imageFile);
-            int quality = 100;
+            int quality = 200;
             bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
             outputStream.flush();
             outputStream.close();

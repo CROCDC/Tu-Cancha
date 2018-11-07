@@ -1,19 +1,15 @@
 package apps.tucancha.View.Activitys;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -23,22 +19,25 @@ import android.support.v4.content.FileProvider;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import com.ayush.imagesteganographylibrary.Text.AsyncTaskCallback.TextDecodingCallback;
-import com.ayush.imagesteganographylibrary.Text.AsyncTaskCallback.TextEncodingCallback;
-import com.ayush.imagesteganographylibrary.Text.ImageSteganography;
-import com.ayush.imagesteganographylibrary.Text.TextEncoding;
-import com.google.zxing.qrcode.QRCodeWriter;
-
-
-import net.glxn.qrgen.android.QRCode;
+import com.google.zxing.BinaryBitmap;
+import com.google.zxing.LuminanceSource;
+import com.google.zxing.MultiFormatReader;
+import com.google.zxing.RGBLuminanceSource;
+import com.google.zxing.Result;
+import com.google.zxing.common.HybridBinarizer;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -52,19 +51,21 @@ import apps.tucancha.Elementos_Creados.Pizarra;
 import apps.tucancha.Elementos_Creados.Screnshot;
 import apps.tucancha.Elementos_Creados.SistemaDragAndDrop;
 import apps.tucancha.Model.Cancha;
+import apps.tucancha.Model.Jugador;
+import apps.tucancha.R;
 import apps.tucancha.Utils.Helper;
 import apps.tucancha.Utils.ResultListener;
 import apps.tucancha.View.Fragments.IngresarJugadorFragment;
-import apps.tucancha.Model.Jugador;
-import apps.tucancha.R;
 import apps.tucancha.View.Fragments.IngresarNombreDeLaCanchaFragment;
 import apps.tucancha.View.Fragments.JugadorFragment;
+import apps.tucancha.View.Fragments.OpcionCompartirImagenFragment;
+import apps.tucancha.connector.Connector;
 
 /**
  * Esta Activity se encarga de recibir las imagenes de cargar los fragments y de poner a los jugadores en la cancha y encargarse del drag and drop
  */
 
-public class MainActivity extends AppCompatActivity implements IngresarJugadorFragment.NotificadorHaciaMainActivity, IngresarNombreDeLaCanchaFragment.NotificadorHaciaMainActivity, TextEncodingCallback, TextDecodingCallback {
+public class MainActivity extends AppCompatActivity implements IngresarJugadorFragment.NotificadorHaciaMainActivity, IngresarNombreDeLaCanchaFragment.NotificadorHaciaMainActivity, OpcionCompartirImagenFragment.NotificadorHaciaMainActivity {
 
 
     private IngresarJugadorFragment ingresarJugadorFragment;
@@ -75,15 +76,15 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
 
     private String yaBuscoUnJugador = "";
 
+    private ImageView imageViewButtonCanchasGuardadas;
     private DrawerLayout drawerLayout;
     private Toolbar toolbar;
     private Pizarra pizarra;
     private RelativeLayout linearLayoutContenedorPizarra;
     private ImageView imageViewAdd;
-    private Bitmap bitmapScreenshot;
+
 
     private final List<JugadorFragment> listaDeJugadoresFragments = new ArrayList<>();
-    private final List<Jugador> listaDeJugadores = new ArrayList<>();
     private List<Cancha> listaDeCanchas = new ArrayList<>();
 
 
@@ -97,8 +98,12 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
     private ControllerFirebase controllerFirebase;
 
     private NavigationView navigationView;
+    private View header;
+    private ProgressBar progressBarHeaderNavigation;
+
 
     private IngresarNombreDeLaCanchaFragment ingresarNombreDeLaCanchaFragment;
+    private OpcionCompartirImagenFragment opcionCompartirImagenFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,28 +112,18 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
 
         toolbar = findViewById(R.id.toolbar);
 
+        imageViewButtonCanchasGuardadas = toolbar.findViewById(R.id.imageViewButtonCanchasGuardadas_toolbar);
         drawerLayout = findViewById(R.id.drawerLayoutContenedor_activitymain);
         rootLayout = findViewById(R.id.relativeLayoutContenedor_activitymain);
         pizarra = findViewById(R.id.pizarra_activitymain);
         imageViewAdd = findViewById(R.id.imageViewButtonAdd_activitymain);
         linearLayoutContenedorPizarra = findViewById(R.id.linearLayoutContenedorSoloPizarra_activitymain);
         navigationView = findViewById(R.id.navigationView_activitymain);
+        header = navigationView.getHeaderView(0);
+        progressBarHeaderNavigation = header.findViewById(R.id.progressBar_headernavigatioview);
 
 
-        if (getIntent() != null) {
-            Bundle bundle = getIntent().getExtras();
-            if (bundle != null) {
-                String json = bundle.getString(CLAVE_JSON);
-
-                List<Jugador> jugadorList = Helper.parseJsonJugadores(json);
-
-                for (Integer i = 0; i < jugadorList.size(); i++) {
-                    agregarFragmentJugadorConImageStorageYUbicacion(jugadorList.get(i));
-                }
-
-
-            }
-        }
+        recibirImagenCompartida();
 
         controllerFirebase = new ControllerFirebase();
 
@@ -136,8 +131,10 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
 
         pedirLaListaDeCanchas();
 
+
         toolbar.setOnMenuItemClickListener(new TouchListenerToolbar());
         navigationView.setNavigationItemSelectedListener(new TouchListenerNavigationView());
+        imageViewButtonCanchasGuardadas.setOnClickListener(new ClickImageViewButtonCanchaGuardadas());
 
 
         touchImageViewButtonAdd();
@@ -145,23 +142,72 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
 
     }
 
+    private void recibirImagenCompartida() {
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        String type = intent.getType();
+
+        if (type != null) {
+            if (type.startsWith("image/")) {
+                Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
+
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
+
+                    List<Jugador> listaDeJugadores = Helper.parseJsonJugadores(leerQR(bitmap));
+
+                    for (Jugador jugador : listaDeJugadores) {
+                        agregarFragmentJugadorConImageStorageYUbicacion(jugador);
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+
+
+                }
+            }
+        }
+    }
 
     public void pedirLaListaDeCanchas() {
+        progressBarHeaderNavigation.setVisibility(View.VISIBLE);
         controllerFirebase.pedirListaDeCanchas(new ResultListener<List<Cancha>>() {
             @Override
             public void finish(List<Cancha> resultado) {
                 listaDeCanchas = resultado;
-
                 agregrarCanchasGuardadaslNavigationView(resultado);
+                progressBarHeaderNavigation.setVisibility(View.GONE);
             }
 
 
         });
     }
 
-    /**
-     * Este metodo se encarga de agregar el fragment IngresarJugador que es el que recibe los datos de imagenes y nombre del usuario
-     */
+    private String leerQR(Bitmap bitmap) {
+
+        bitmap = Helper.recortarImagenQR(bitmap);
+
+        if (bitmap == null) {
+            Toast.makeText(this, "La imagen que nos dio no contiene un codigo QR valido", Toast.LENGTH_SHORT).show();
+        }
+        int[] intArray = new int[bitmap.getWidth() * bitmap.getHeight()];
+        bitmap.getPixels(intArray, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+        LuminanceSource source = new RGBLuminanceSource(bitmap.getWidth(), bitmap.getHeight(), intArray);
+        BinaryBitmap binaryBitmap = new BinaryBitmap(new HybridBinarizer(source));
+
+        MultiFormatReader multiFormatReader = new MultiFormatReader();
+
+
+        Result result = null;
+        try {
+            result = multiFormatReader.decode(binaryBitmap);
+        } catch (Exception e) {
+            Toast.makeText(this, "Se encontro un problema en la lectura del codigo QR", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+
+        return result.getText();
+    }
 
     public void touchImageViewButtonAdd() {
         imageViewAdd.setOnClickListener(new View.OnClickListener() {
@@ -231,12 +277,9 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.add(R.id.linearLayoutContenedorSoloPizarra_activitymain, jugadorFragment).addToBackStack("Camilo");
 
-
         fragmentTransaction.remove(ingresarJugadorFragment);
 
-
         listaDeJugadoresFragments.add(jugadorFragment);
-        listaDeJugadores.add(jugador);
 
         fragmentTransaction.commitAllowingStateLoss();
 
@@ -253,7 +296,6 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
                         fragmentTransaction.remove(jugadorFragment);
                         fragmentTransaction.commit();
                         listaDeJugadoresFragments.remove(jugadorFragmentAEliminar);
-                        listaDeJugadores.remove(jugador);
                     }
                 }, (FrameLayout.LayoutParams) rootLayout.getLayoutParams()));
 
@@ -283,7 +325,6 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
         fragmentTransaction.commitAllowingStateLoss();
 
         listaDeJugadoresFragments.add(jugadorFragment);
-        listaDeJugadores.add(jugador);
 
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -294,7 +335,6 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
                     @Override
                     public void finish(JugadorFragment jugadorFragmentAEliminar) {
                         listaDeJugadoresFragments.remove(jugadorFragmentAEliminar);
-                        listaDeJugadores.remove(jugador);
                     }
                 }, (FrameLayout.LayoutParams) rootLayout.getLayoutParams()));
 
@@ -318,7 +358,6 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
         fragmentTransaction.commitAllowingStateLoss();
 
         listaDeJugadoresFragments.add(jugadorFragment);
-        listaDeJugadores.add(jugador);
 
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -333,7 +372,6 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
                         fragmentTransaction.commit();
 
                         listaDeJugadoresFragments.remove(jugadorFragmentAEliminar);
-                        listaDeJugadores.remove(jugador);
                     }
                 }, jugador.getX(), jugador.getY(), (FrameLayout.LayoutParams) rootLayout.getLayoutParams()));
 
@@ -369,7 +407,6 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
         }
 
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -416,7 +453,6 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
 
     }
 
-
     private void compartirCancha(Bitmap bitmap) {
 
 
@@ -459,30 +495,80 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
         }
     }
 
-
-    @SuppressLint("NewApi")
-    private void agregrarCanchasGuardadaslNavigationView(List<Cancha> listaDeCanchas) {
+    private void agregrarCanchasGuardadaslNavigationView(List<Cancha> listaDeCanchasM) {
         Menu menu = navigationView.getMenu();
-
-
         menu.clear();
 
-        menu.add("Canchas Guardadas");
+
+        for (Integer i = 0; i < listaDeCanchasM.size(); i++) {
+            menu.add("");
+            menu.getItem(i).setActionView(R.layout.celda_item_navigation_view);
+            View view = menu.getItem(i).getActionView();
+            TextView textView = view.findViewById(R.id.textViewNombreDeLaCancha_celdaitemnavigationview);
+            ImageView imageView = view.findViewById(R.id.imageViewButtonBorrar_celdaitemnavigationview);
+            textView.setText(listaDeCanchasM.get(i).getNombre() + "");
+
+            Integer finalI = i;
+
+            ClickImageViewButtonBorrarItemNavigationView clickImageViewButtonBorrarItemNavigationView = new ClickImageViewButtonBorrarItemNavigationView();
+            clickImageViewButtonBorrarItemNavigationView.setI(finalI);
+            imageView.setOnClickListener(clickImageViewButtonBorrarItemNavigationView);
+
+            navigationView.invalidate();
 
 
-        for (Cancha cancha : listaDeCanchas) {
-            menu.add(cancha.getNombre());
+        }
+    }
+
+    private class ClickImageViewButtonBorrarItemNavigationView implements View.OnClickListener {
+
+        Integer i;
+
+        @Override
+        public void onClick(View v) {
+            progressBarHeaderNavigation.setVisibility(View.VISIBLE);
+            controllerFirebase.borrarCancha(listaDeCanchas.get(i), new ResultListener<Boolean>() {
+                @Override
+                public void finish(Boolean resultado) {
+                    controllerFirebase.pedirListaDeCanchas(new ResultListener<List<Cancha>>() {
+                        @Override
+                        public void finish(List<Cancha> resultado) {
+                            agregrarCanchasGuardadaslNavigationView(resultado);
+                            Toast.makeText(MainActivity.this, "Cancha Borrada", Toast.LENGTH_SHORT).show();
+                            progressBarHeaderNavigation.setVisibility(View.INVISIBLE);
+                        }
+                    });
+                }
+            });
         }
 
-        navigationView.invalidate();
+        public void setI(Integer i) {
+            this.i = i;
+        }
     }
 
     @Override
     public void notificarGuardarCancha(String nombreDeLaCancha) {
         getSupportFragmentManager().beginTransaction().remove(ingresarNombreDeLaCanchaFragment).commit();
 
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
-        for (Integer i = 0; i < listaDeJugadores.size(); i++) {
+        if (listaDeJugadoresFragments.size() == 0) {
+            Toast.makeText(this, "No puede guardar una cancha sin jugadores", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+
+        List<Jugador> listaDeJugadores = new ArrayList<>();
+
+        for (Integer i = 0; i < listaDeJugadoresFragments.size(); i++) {
+            Jugador jugador = new Jugador(
+                    listaDeJugadoresFragments.get(i).getJugador().getNombre(),
+                    listaDeJugadoresFragments.get(i).getJugador().getUrlFoto(),
+                    listaDeJugadoresFragments.get(i).getJugador().getTipoJugador()
+            );
+
+            listaDeJugadores.add(jugador);
 
             listaDeJugadores.get(i).setX(listaDeJugadoresFragments.get(i).getView().getX());
             listaDeJugadores.get(i).setY(listaDeJugadoresFragments.get(i).getView().getY());
@@ -508,24 +594,38 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
     }
 
     @Override
-    public void onStartTextEncoding() {
+    public void CompartirConCodigoQR() {
+
+        if (listaDeJugadoresFragments.size() >= 15) {
+            Toast.makeText(this, "No se recomienda compartir una cancha con " + listaDeJugadoresFragments.size() + " Jugadores", Toast.LENGTH_SHORT).show();
+        }
+        Bitmap bitmap = Screnshot.hacerScreenshotFormatoBitmap(linearLayoutContenedorPizarra);
+        Bitmap bimapQR = Helper.creaQR2(escribirLaCanchaEnJson(), bitmap.getWidth(), listaDeJugadoresFragments.size());
+        compartirCancha(Helper.bitMap1BottomBitmap2(bitmap, bimapQR));
+        opcionCompartirImagenFragment.detenerProgressBar();
 
     }
 
     @Override
-    public void onCompleteTextEncoding(ImageSteganography result) {
-
-
+    public void CompartirSinCodigoQR() {
+        Bitmap bitmap = Screnshot.hacerScreenshotFormatoBitmap(linearLayoutContenedorPizarra);
+        compartirCancha(bitmap);
+        opcionCompartirImagenFragment.detenerProgressBar();
     }
 
-
     private class TouchListenerNavigationView implements NavigationView.OnNavigationItemSelectedListener {
-        @SuppressLint("NewApi")
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
+            String nombreDeLaCancha;
+            View view = item.getActionView();
+
+            TextView textView = view.findViewById(R.id.textViewNombreDeLaCancha_celdaitemnavigationview);
+
+            nombreDeLaCancha = (String) textView.getText();
+
             for (Integer i = 0; i < listaDeCanchas.size(); i++) {
-                if (listaDeCanchas.get(i).getNombre().equals(item.getTitle())) {
+                if (listaDeCanchas.get(i).getNombre().equals(nombreDeLaCancha)) {
                     cargarCanchaSeleccionada(i);
                 }
             }
@@ -536,9 +636,10 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
     }
 
     private class TouchListenerToolbar implements Toolbar.OnMenuItemClickListener {
-        @SuppressLint("NewApi")
         @Override
         public boolean onMenuItemClick(MenuItem item) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction().addToBackStack("Camilo");
             switch (item.getItemId()) {
 
                 case R.id.opcionDibujar:
@@ -554,20 +655,26 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
 
                     break;
                 case R.id.opcionCompartir:
-                    bitmapScreenshot = Screnshot.hacerScreenshotFormatoBitmap(linearLayoutContenedorPizarra);
-                    guardarImagenEnElAlmacenamientoInterno(bitmapScreenshot);
-                    bitMap1BottomBitmap2(bitmapScreenshot, crearQR(escribirLaCanchaEnJson()));
-                    compartirCancha(bitMap1BottomBitmap2(bitmapScreenshot, crearQR(escribirLaCanchaEnJson())));
+                    if (listaDeJugadoresFragments.size() == 0) {
+                        Toast.makeText(MainActivity.this, "No se puede compartir una cancha vacia", Toast.LENGTH_SHORT).show();
+
+                    } else {
+                        opcionCompartirImagenFragment = new OpcionCompartirImagenFragment();
+                        fragmentTransaction.add(R.id.frameLayoutContenedor_activitymain, opcionCompartirImagenFragment);
+                        fragmentTransaction.commit();
+                    }
+
 
                     break;
 
                 case R.id.opcionGuardar:
-                    ingresarNombreDeLaCanchaFragment = new IngresarNombreDeLaCanchaFragment();
-
-                    FragmentManager fragmentManager = getSupportFragmentManager();
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.add(R.id.frameLayoutContenedor_activitymain, ingresarNombreDeLaCanchaFragment);
-                    fragmentTransaction.commitAllowingStateLoss();
+                    if (listaDeJugadoresFragments.size() == 0) {
+                        Toast.makeText(MainActivity.this, "No se puede guardar una cancha vacia", Toast.LENGTH_SHORT).show();
+                    } else {
+                        ingresarNombreDeLaCanchaFragment = new IngresarNombreDeLaCanchaFragment();
+                        fragmentTransaction.add(R.id.frameLayoutContenedor_activitymain, ingresarNombreDeLaCanchaFragment).addToBackStack("Camilo");
+                        fragmentTransaction.commitAllowingStateLoss();
+                    }
 
 
                     break;
@@ -595,14 +702,14 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
             if (i == 0) {
                 jugadorJson = "{" + nombreJugador + "\"" + jugadorFragment.getJugador().getNombre() + "\"" + "," +
                         tipoJugador + jugadorFragment.getJugador().getTipoJugador() + "," +
-                        urlFoto + "\"" + jugadorFragment.getJugador().getUrlFoto() + "\"" + "," +
+                        urlFoto + "\"" + jugadorFragment.getJugador().getUrlFoto().replace("https://firebasestorage.googleapis.com/v0/b/tu-cancha-c4289.appspot.com/o/Clubes%", "") + "\"" + "," +
                         x + jugadorFragment.getView().getX() + "," +
                         y + jugadorFragment.getView().getY() + "}";
             } else {
                 canchaJson += ",";
                 jugadorJson = "{" + nombreJugador + "\"" + jugadorFragment.getJugador().getNombre() + "\"" + "," +
                         tipoJugador + jugadorFragment.getJugador().getTipoJugador() + "," +
-                        urlFoto + "\"" + jugadorFragment.getJugador().getUrlFoto() + "\"" + "," +
+                        urlFoto + "\"" + jugadorFragment.getJugador().getUrlFoto().replace("https://firebasestorage.googleapis.com/v0/b/tu-cancha-c4289.appspot.com/o/Clubes%", "") + "\"" + "," +
                         x + jugadorFragment.getView().getX() + "," +
                         y + jugadorFragment.getView().getY() + "}";
             }
@@ -613,72 +720,6 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
         canchaJson += "]}";
 
         return canchaJson;
-    }
-
-    private void escribirDatosEnLaImagen(Bitmap bitmap) {
-
-        String canchaJson = escribirLaCanchaEnJson();
-
-        ImageSteganography imageSteganography = new ImageSteganography(canchaJson,
-                "110599",
-                bitmap);
-
-        TextEncoding textEncoding = new TextEncoding(MainActivity.this,
-                MainActivity.this);
-
-        textEncoding.execute(imageSteganography);
-
-    }
-
-    private void convertirBitmapEnPDF(Bitmap bitmap) {
-        PdfDocument document = new PdfDocument();
-        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(bitmap.getWidth(), bitmap.getHeight(), 1).create();
-        PdfDocument.Page page = document.startPage(pageInfo);
-
-
-        Canvas canvas = page.getCanvas();
-
-
-        Paint paint = new Paint();
-
-        paint.setColor(Color.parseColor("#ffffff"));
-
-        canvas.drawPaint(paint);
-
-
-        bitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), true);
-
-        paint.setColor(Color.BLUE);
-
-        canvas.drawBitmap(bitmap, 0, 0, null);
-
-        document.finishPage(page);
-
-
-        String targetPdf = this.getExternalCacheDir() + "/cancha.pdf";
-        File filePath = new File(targetPdf);
-
-        try {
-            document.writeTo(new FileOutputStream(filePath));
-
-        } catch (IOException e) {
-
-        }
-
-        document.close();
-
-        Uri uriFromFile = FileProvider.getUriForFile(getBaseContext(), "apps.tucancha.Utils.GenericFileProvider", filePath);
-
-        Intent share = new Intent();
-        share.setAction(Intent.ACTION_SEND);
-        share.setType("application/pdf");
-        share.putExtra(Intent.EXTRA_STREAM, uriFromFile);
-        share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-        share.setPackage("com.whatsapp");
-
-        this.startActivity(share);
-
     }
 
     private void guardarImagenEnElAlmacenamientoInterno(Bitmap bitmapImage) {
@@ -704,21 +745,7 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
         }
     }
 
-    private Bitmap crearQR(String json) {
-        return QRCode.from(json).withSize(800, 800).bitmap();
-
-    }
-
-    private Bitmap bitMap1BottomBitmap2(Bitmap bmp1, Bitmap bmp2) {
-        Bitmap bmOverlay = Bitmap.createBitmap(bmp1.getWidth(), bmp1.getHeight() + bmp2.getHeight(), bmp1.getConfig());
-        Canvas canvas = new Canvas(bmOverlay);
-        canvas.drawBitmap(bmp1, new Matrix(), null);
-        canvas.drawBitmap(bmp2, bmp1.getWidth() / 2 - bmp2.getWidth() / 2, bmp1.getHeight(), null);
-        return bmOverlay;
-    }
-
-    @SuppressLint("NewApi")
-    public void cargarCanchaSeleccionada(Integer iCancha) {
+    private void cargarCanchaSeleccionada(Integer iCancha) {
         Cancha cancha = listaDeCanchas.get(iCancha);
 
         for (Jugador jugador : cancha.getListaDeJugadores()) {
@@ -727,6 +754,14 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
 
 
     }
+
+    private class ClickImageViewButtonCanchaGuardadas implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            drawerLayout.openDrawer(Gravity.START);
+        }
+    }
+
 
 }
 

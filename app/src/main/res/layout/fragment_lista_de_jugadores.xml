@@ -8,6 +8,8 @@
     tools:context=".View.Fragments.ListaDeJugadoresFragment">
 
 
+
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerViewListaDeJugadores_fragmentlistadejugadores"
         android:layout_width="match_parent"

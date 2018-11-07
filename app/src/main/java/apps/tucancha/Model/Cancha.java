@@ -5,8 +5,9 @@ import java.util.List;
 public class Cancha {
     private String nombre;
     private List<Jugador> listaDeJugadores;
+    private String posicion;
 
-    public Cancha(){
+    public Cancha() {
 
     }
 
@@ -30,5 +31,13 @@ public class Cancha {
 
     public void setListaDeJugadores(List<Jugador> listaDeJugadores) {
         this.listaDeJugadores = listaDeJugadores;
+    }
+
+    public String getPosicion() {
+        return posicion;
+    }
+
+    public void setPosicion(String posicion) {
+        this.posicion = posicion;
     }
 }

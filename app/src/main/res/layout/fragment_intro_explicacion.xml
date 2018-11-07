@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorAccent"
+    android:orientation="vertical"
+    tools:context=".View.Fragments.Walkthrough.IntroExplicacionFragment">
+
+    <android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:elevation="6dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="Que es Tu Cancha?"
+            android:textColor="@color/negro"
+            android:textSize="25sp" />
+
+    </android.support.v7.widget.Toolbar>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="20dp"
+        android:text="Tu cancha es una aplicacion creada a partir de la necesidad de generar planteos de futbol ya sea en un partido real o un partido ficticio. \n\n\n\n Aqui podras crear tu propio equipo y compartilo con tus amigos como una imagen o guardarlo para despues seguir trabando en el.\n\n\n podras usar como jugadores a tus propios amigos o utilizar nuestro catalogo de jugadores del futbol argentino.\n\n\n Ahora podras ser un tecnico profesional y explicar las jugadas que queres hacer a tu equipo "
+        android:textSize="@dimen/_16sdp" />
+
+
+</LinearLayout>

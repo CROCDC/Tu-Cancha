@@ -4,9 +4,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
 
-
 import com.google.android.gms.tasks.OnSuccessListener;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -51,7 +49,7 @@ public class DAOFirebase {
 
         databaseReference.child("Clubes").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            public void onDataChange(DataSnapshot dataSnapshot) {
                 List<String> listaDeClubes = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     String club = (String) snapshot.getValue();
@@ -62,7 +60,7 @@ public class DAOFirebase {
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+            public void onCancelled(DatabaseError databaseError) {
 
             }
         });
@@ -79,7 +77,7 @@ public class DAOFirebase {
 
         databaseReference.child("Jugadores").child(nombreDelClub).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            public void onDataChange(DataSnapshot dataSnapshot) {
                 List<String> listaDeJugadores = new ArrayList<>();
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
@@ -92,7 +90,7 @@ public class DAOFirebase {
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+            public void onCancelled(DatabaseError databaseError) {
 
             }
         });
@@ -146,15 +144,25 @@ public class DAOFirebase {
 
     }
 
+    public void borrarCancha(Cancha cancha ,final  ResultListener<Boolean> escuchadorDelControlador){
+        databaseReference = firebaseDatabase.getReference();
+        databaseReference.child("CanchasGuardadas").child(numeroDeSerie).child(cancha.getPosicion()).setValue(null);
+        escuchadorDelControlador.finish(true);
+
+    }
+
     public void pedirListaDeCanchasGuardadas(final  ResultListener<List<Cancha>> escuchadorDelControlador){
         databaseReference = firebaseDatabase.getReference();
 
         databaseReference.child("CanchasGuardadas").child(numeroDeSerie).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            public void onDataChange(DataSnapshot dataSnapshot) {
                 List<Cancha> listaDeCanchas = new ArrayList<>();
+                Integer i =0;
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     listaDeCanchas.add(snapshot.getValue(Cancha.class));
+                    listaDeCanchas.get(i).setPosicion(snapshot.getKey());
+                    i+=1;
                 }
 
                 escuchadorDelControlador.finish(listaDeCanchas);
