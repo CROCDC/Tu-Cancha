@@ -14,8 +14,10 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import apps.tucancha.Controller.ControllerFirebase;
+import apps.tucancha.DAO.DAOScraping;
 import apps.tucancha.Model.Jugador;
 import apps.tucancha.R;
 import apps.tucancha.Utils.ResultListener;
@@ -77,15 +79,22 @@ public class ListaDeJugadoresFragment extends Fragment {
                 notificador.notificarTouchCeldaJugadorNotificarActualizarImagen(jugador, nombreDelClub);
             }
         });
-        controllerFirebase.pedirListaDeJugadoresPorClub(nombreDelClub, new ResultListener<List<Jugador>>() {
-            @Override
-            public void finish(List<Jugador> resultado) {
-                listaDeJugadoresAdapter.setListaDeJugadores(resultado);
-                listaDeJugadores = resultado;
-                progressBar.setVisibility(View.GONE);
-                notificador.notificarCargaTerminada();
-            }
-        });
+
+        try {
+            new DAOScraping(new ResultListener<List<Jugador>>() {
+                @Override
+                public void finish(List<Jugador> resultado) {
+                    listaDeJugadoresAdapter.setListaDeJugadores(resultado);
+                    notificador.notificarCargaTerminada();
+                    progressBar.setVisibility(View.GONE);
+
+                }
+            }).execute(nombreDelClub);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     @Override
@@ -102,7 +111,6 @@ public class ListaDeJugadoresFragment extends Fragment {
         recyclerView.setLayoutManager(gridLayoutManager);
 
 
-
         return view;
     }
 
@@ -111,6 +119,7 @@ public class ListaDeJugadoresFragment extends Fragment {
      */
     public interface NotificadorDesdeJugadoresHaciaSeleccionarJugadorActivity {
         public void notificarTouchCeldaJugadorNotificarActualizarImagen(Jugador jugador, String nombreDelClub);
+
         public void notificarCargaTerminada();
     }
 

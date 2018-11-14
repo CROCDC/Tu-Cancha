@@ -31,22 +31,23 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.LuminanceSource;
 import com.google.zxing.MultiFormatReader;
 import com.google.zxing.RGBLuminanceSource;
 import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 import apps.tucancha.Controller.ControllerFirebase;
+import apps.tucancha.Controller.ControllerScraping;
+import apps.tucancha.DAO.DAOScraping;
 import apps.tucancha.Elementos_Creados.Pizarra;
 import apps.tucancha.Elementos_Creados.Screnshot;
 import apps.tucancha.Elementos_Creados.SistemaDragAndDrop;
@@ -138,6 +139,7 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
 
 
         touchImageViewButtonAdd();
+
 
 
     }
@@ -384,6 +386,10 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
      * Metodo de la Interfaz NotificadorDesdeClubesHaciaSeleccionarJugadorActivity se encarga de cargar la Activity SeleccionarJugador
      */
 
+
+    private void agregarJugadorAlLayot(JugadorFragment jugadorFragment){
+
+    }
     @Override
     public void notificarCargarListaDeClubes() {
 
@@ -549,9 +555,8 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
 
     @Override
     public void notificarGuardarCancha(String nombreDeLaCancha) {
+        Helper.hideKeyboard(MainActivity.this);
         getSupportFragmentManager().beginTransaction().remove(ingresarNombreDeLaCanchaFragment).commit();
-
-        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         if (listaDeJugadoresFragments.size() == 0) {
             Toast.makeText(this, "No puede guardar una cancha sin jugadores", Toast.LENGTH_SHORT).show();

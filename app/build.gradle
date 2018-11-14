@@ -60,6 +60,12 @@ dependencies {
 
     //RESPONSIVE
     implementation 'com.intuit.sdp:sdp-android:1.0.6'
+    implementation 'com.intuit.ssp:ssp-android:1.0.6'
+
+    //JSOUP SCRAPING
+    implementation 'org.jsoup:jsoup:1.11.3'
+
+
 
 
 
