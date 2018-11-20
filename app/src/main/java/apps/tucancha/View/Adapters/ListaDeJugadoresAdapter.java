@@ -8,16 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import apps.tucancha.Model.Jugador;
+import apps.tucancha.R;
 import com.bumptech.glide.Glide;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import apps.tucancha.Model.Jugador;
-import apps.tucancha.R;
 
 public class ListaDeJugadoresAdapter extends RecyclerView.Adapter {
     private List<Jugador> listaDeJugadores;

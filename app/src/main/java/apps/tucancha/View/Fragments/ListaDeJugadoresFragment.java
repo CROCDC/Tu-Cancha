@@ -12,16 +12,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-
 import apps.tucancha.Controller.ControllerFirebase;
 import apps.tucancha.DAO.DAOScraping;
 import apps.tucancha.Model.Jugador;
 import apps.tucancha.R;
 import apps.tucancha.Utils.ResultListener;
 import apps.tucancha.View.Adapters.ListaDeJugadoresAdapter;
+
+import java.util.List;
 
 /**
  * Este fragment es el encargador de pedirle al controller que le de la lista de jugadores y de notificarle al MainActivity cual jugador fue tocado

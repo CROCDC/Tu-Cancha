@@ -1,12 +1,11 @@
 package apps.tucancha.View.Fragments.Walkthrough;
 
 
-import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import apps.tucancha.R;
 
 /**

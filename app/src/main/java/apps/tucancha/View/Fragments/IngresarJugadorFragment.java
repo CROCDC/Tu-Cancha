@@ -13,16 +13,14 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-
-import com.bumptech.glide.Glide;
-
-import java.io.File;
-
 import apps.tucancha.Model.Jugador;
 import apps.tucancha.R;
+import com.bumptech.glide.Glide;
 import de.hdodenhof.circleimageview.CircleImageView;
 import pl.aprilapps.easyphotopicker.DefaultCallback;
 import pl.aprilapps.easyphotopicker.EasyImage;
+
+import java.io.File;
 
 
 /**
@@ -91,7 +89,7 @@ public class IngresarJugadorFragment extends Fragment {
         imageViewButtonAddFoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EasyImage.openGallery(IngresarJugadorFragment.this, 666);
+                EasyImage.openChooserWithGallery(IngresarJugadorFragment.this,"Elige una opcion",666);
 
 
             }

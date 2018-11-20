@@ -31,14 +31,14 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <apps.tucancha.Elementos_Creados.Pizarra
+                <apps.tucancha.widgets.Pizarra
                     android:id="@+id/pizarra_activitymain"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
                     android:background="@drawable/canchadefutbol1">
 
-                </apps.tucancha.Elementos_Creados.Pizarra>
+                </apps.tucancha.widgets.Pizarra>
 
             </RelativeLayout>
 

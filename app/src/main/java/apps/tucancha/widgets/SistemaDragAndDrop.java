@@ -1,10 +1,9 @@
 
-package apps.tucancha.Elementos_Creados;
+package apps.tucancha.widgets;
 
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
-
 import apps.tucancha.Utils.ResultListener;
 import apps.tucancha.View.Fragments.JugadorFragment;
 

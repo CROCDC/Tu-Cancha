@@ -1,0 +1,1 @@
+package apps.tucancha.Modelimport android.os.Parcelableimport java.io.Serializabledata class ListadoDeJugadores(val listaDeJugadores: List<Jugador>) : Serializable

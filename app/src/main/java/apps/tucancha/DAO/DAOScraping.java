@@ -1,20 +1,15 @@
 package apps.tucancha.DAO;
 
 import android.os.AsyncTask;
-
+import apps.tucancha.Model.Jugador;
+import apps.tucancha.Utils.ResultListener;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.xml.xpath.XPath;
-
-import apps.tucancha.Model.Jugador;
-import apps.tucancha.Utils.ResultListener;
 
 public class DAOScraping extends AsyncTask<String, ResultListener<List<Jugador>>, List<Jugador>> {
 

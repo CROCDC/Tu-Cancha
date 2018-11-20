@@ -12,13 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-
-import java.util.List;
-
 import apps.tucancha.Controller.ControllerFirebase;
 import apps.tucancha.R;
 import apps.tucancha.Utils.ResultListener;
 import apps.tucancha.View.Adapters.ListaDeClubesAdapter;
+
+import java.util.List;
 
 /**
  * Este fragment es el encargador de mostrar la lista de clubes que se descarga mediante el controller y ademas notificalre al MainActivity que debe agregar el fragment

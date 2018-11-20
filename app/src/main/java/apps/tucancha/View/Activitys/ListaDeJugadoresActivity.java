@@ -13,14 +13,13 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import apps.tucancha.Model.Jugador;
 import apps.tucancha.R;
 import apps.tucancha.Utils.Helper;
 import apps.tucancha.View.Fragments.ListaDeJugadoresFragment;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ListaDeJugadoresActivity extends AppCompatActivity implements ListaDeJugadoresFragment.NotificadorDesdeJugadoresHaciaSeleccionarJugadorActivity {
 

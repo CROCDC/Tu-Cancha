@@ -3,22 +3,16 @@ package apps.tucancha.DAO;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
-
+import apps.tucancha.Model.Cancha;
+import apps.tucancha.Model.Jugador;
+import apps.tucancha.Utils.ResultListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.*;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import apps.tucancha.Model.Cancha;
-import apps.tucancha.Model.Jugador;
-import apps.tucancha.Utils.ResultListener;
 
 /**
  * Clase encargada de recibir los pedidos del controller y hacerselos a firebase utiliza database y storage

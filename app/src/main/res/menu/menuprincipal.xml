@@ -1,22 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item
-        android:id="@+id/opcionDibujar"
-        android:icon="@drawable/pencilblack"
-        android:title="Dibujar"
-        app:showAsAction="always" />
+      xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/opcionGuardar"
-        android:icon="@drawable/save"
-        android:title="Guardar"
-        app:showAsAction="always" />
-    <item
-        android:id="@+id/opcionCompartir"
-        android:icon="@drawable/share"
-        android:title="Compartir"
-        app:showAsAction="always" />
+            android:visible="false"
+            android:id="@+id/opcionAR"
+            android:icon="@drawable/icn_ar"
+            android:title="AR"
+            app:showAsAction="always"/>
 
+    <item
+            android:id="@+id/opcionDibujar"
+            android:icon="@drawable/ic_pencil_black"
+            android:title="Dibujar"
+            app:showAsAction="always"/>
+
+    <item
+            android:id="@+id/opcionGuardar"
+            android:icon="@drawable/ic_save"
+            android:title="Guardar"
+            app:showAsAction="always"/>
+    <item
+
+            android:id="@+id/opcionCompartir"
+            android:icon="@drawable/ic_share"
+            android:title="Compartir"
+            app:showAsAction="always"/>
 
 </menu>

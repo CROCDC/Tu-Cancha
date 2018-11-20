@@ -1,4 +1,4 @@
-package apps.tucancha.Elementos_Creados;
+package apps.tucancha.widgets;
 
 import android.content.Context;
 import android.graphics.Bitmap;

@@ -2,22 +2,12 @@ package apps.tucancha.View.Activitys;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.os.Bundle;
-
-import com.github.paolorotolo.appintro.AppIntro;
-
 import apps.tucancha.R;
-import apps.tucancha.View.Fragments.Walkthrough.IntroExplicacionAgregarJugadorFragment;
-import apps.tucancha.View.Fragments.Walkthrough.IntroExplicacionBorrarJugadorFragment;
-import apps.tucancha.View.Fragments.Walkthrough.IntroExplicacionBotonesFragment;
-import apps.tucancha.View.Fragments.Walkthrough.IntroExplicacionCompartirFragment;
-import apps.tucancha.View.Fragments.Walkthrough.IntroExplicacionFinalFragment;
-import apps.tucancha.View.Fragments.Walkthrough.IntroExplicacionFragment;
-import apps.tucancha.View.Fragments.Walkthrough.IntroExplicacionFuncionamientoFragment;
-import apps.tucancha.View.Fragments.Walkthrough.IntroExplicacionGuardadoFragment;
-import apps.tucancha.View.Fragments.Walkthrough.IntroExplicacionLapizFragment;
+import apps.tucancha.View.Fragments.Walkthrough.*;
+import com.github.paolorotolo.appintro.AppIntro;
 
 public class IntroActivity extends AppIntro {
 

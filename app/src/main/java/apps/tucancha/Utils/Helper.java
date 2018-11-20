@@ -11,29 +11,17 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.BinaryBitmap;
-import com.google.zxing.LuminanceSource;
-import com.google.zxing.RGBLuminanceSource;
-import com.google.zxing.Result;
-import com.google.zxing.WriterException;
+import apps.tucancha.Model.Jugador;
+import com.google.gson.*;
+import com.google.zxing.*;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
 import com.google.zxing.qrcode.QRCodeWriter;
-
 import net.glxn.qrgen.android.QRCode;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import apps.tucancha.Model.Jugador;
 
 public class Helper {
     public static final String MEDIA_STORAGE = "https://firebasestorage.googleapis.com/v0/b/tu-cancha-c4289.appspot.com/o/Clubes%";

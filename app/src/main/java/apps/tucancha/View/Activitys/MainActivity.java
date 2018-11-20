@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,40 +18,15 @@ import android.support.v4.content.FileProvider;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-import com.google.zxing.BinaryBitmap;
-import com.google.zxing.LuminanceSource;
-import com.google.zxing.MultiFormatReader;
-import com.google.zxing.RGBLuminanceSource;
-import com.google.zxing.Result;
-import com.google.zxing.common.HybridBinarizer;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.ExecutionException;
-
+import android.view.*;
+import android.widget.*;
 import apps.tucancha.Controller.ControllerFirebase;
-import apps.tucancha.Controller.ControllerScraping;
-import apps.tucancha.DAO.DAOScraping;
-import apps.tucancha.Elementos_Creados.Pizarra;
-import apps.tucancha.Elementos_Creados.Screnshot;
-import apps.tucancha.Elementos_Creados.SistemaDragAndDrop;
+import apps.tucancha.widgets.Pizarra;
+import apps.tucancha.widgets.Screnshot;
+import apps.tucancha.widgets.SistemaDragAndDrop;
 import apps.tucancha.Model.Cancha;
 import apps.tucancha.Model.Jugador;
+import apps.tucancha.Model.ListadoDeJugadores;
 import apps.tucancha.R;
 import apps.tucancha.Utils.Helper;
 import apps.tucancha.Utils.ResultListener;
@@ -60,7 +34,15 @@ import apps.tucancha.View.Fragments.IngresarJugadorFragment;
 import apps.tucancha.View.Fragments.IngresarNombreDeLaCanchaFragment;
 import apps.tucancha.View.Fragments.JugadorFragment;
 import apps.tucancha.View.Fragments.OpcionCompartirImagenFragment;
-import apps.tucancha.connector.Connector;
+import com.google.zxing.*;
+import com.google.zxing.common.HybridBinarizer;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Esta Activity se encarga de recibir las imagenes de cargar los fragments y de poner a los jugadores en la cancha y encargarse del drag and drop
@@ -123,7 +105,6 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
         header = navigationView.getHeaderView(0);
         progressBarHeaderNavigation = header.findViewById(R.id.progressBar_headernavigatioview);
 
-
         recibirImagenCompartida();
 
         controllerFirebase = new ControllerFirebase();
@@ -132,14 +113,15 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
 
         pedirLaListaDeCanchas();
 
-
         toolbar.setOnMenuItemClickListener(new TouchListenerToolbar());
         navigationView.setNavigationItemSelectedListener(new TouchListenerNavigationView());
         imageViewButtonCanchasGuardadas.setOnClickListener(new ClickImageViewButtonCanchaGuardadas());
 
-
         touchImageViewButtonAdd();
 
+        if (Build.VERSION.SDK_INT >= 24) {
+            addButtonAR();
+        }
 
 
     }
@@ -387,9 +369,10 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
      */
 
 
-    private void agregarJugadorAlLayot(JugadorFragment jugadorFragment){
+    private void agregarJugadorAlLayot(JugadorFragment jugadorFragment) {
 
     }
+
     @Override
     public void notificarCargarListaDeClubes() {
 
@@ -647,15 +630,28 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction().addToBackStack("Camilo");
             switch (item.getItemId()) {
 
+                case R.id.opcionAR:
+                    Intent intent = new Intent(MainActivity.this, ArActivity.class);
+
+                    Bundle bundle = new Bundle();
+
+                    bundle.putSerializable(ArActivity.getListaDeJugadores(), new ListadoDeJugadores(listFragmentToListObject(listaDeJugadoresFragments)));
+
+                    intent.putExtras(bundle);
+
+                    startActivity(intent);
+
+                    break;
+
                 case R.id.opcionDibujar:
                     if (pizarra.isHabilitado()) {
                         pizarra.deshabilitarPizarra();
                         pizarra.borrarDibujo();
-                        toolbar.getMenu().getItem(0).setIcon(R.drawable.pencilblack);
+                        toolbar.getMenu().getItem(1).setIcon(R.drawable.ic_pencil_black);
 
                     } else {
                         pizarra.habilitarPizarra();
-                        toolbar.getMenu().getItem(0).setIcon(R.drawable.pencilwhite);
+                        toolbar.getMenu().getItem(1).setIcon(R.drawable.ic_pencil_white);
                     }
 
                     break;
@@ -727,6 +723,10 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
         return canchaJson;
     }
 
+    private void addButtonAR() {
+        toolbar.getMenu().getItem(0).setVisible(true);
+    }
+
     private void guardarImagenEnElAlmacenamientoInterno(Bitmap bitmapImage) {
         ContextWrapper cw = new ContextWrapper(getApplicationContext());
         // path to /data/data/yourapp/app_data/imageDir
@@ -767,10 +767,14 @@ public class MainActivity extends AppCompatActivity implements IngresarJugadorFr
         }
     }
 
+    private List<Jugador> listFragmentToListObject(List<JugadorFragment> lista) {
+        List<Jugador> jugadores = new ArrayList();
+        for (JugadorFragment jugadorFragment : lista) {
+            jugadores.add(jugadorFragment.getJugador());
+        }
+
+        return jugadores;
+    }
+
 
 }
-
-
-
-
-
