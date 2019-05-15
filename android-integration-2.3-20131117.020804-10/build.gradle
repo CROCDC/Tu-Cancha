@@ -1,2 +1,0 @@
-configurations.maybeCreate("default")
-artifacts.add("default", file('android-integration-2.3-20131117.020804-10.jar'))

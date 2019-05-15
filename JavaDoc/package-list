@@ -1,8 +1,0 @@
-apps.tucancha
-apps.tucancha.Controller
-apps.tucancha.DAO
-apps.tucancha.Model
-apps.tucancha.Utils
-apps.tucancha.View.Activitys
-apps.tucancha.View.Adapters
-apps.tucancha.View.Fragments
